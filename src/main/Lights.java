@@ -60,6 +60,14 @@ public class Lights extends JPanel {
 		this.style = style;
 	}
 	
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+
 	public void togglePause() {
 		paused = !paused;
 	}

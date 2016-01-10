@@ -13,7 +13,7 @@ public class Dots implements Visual {
 	private Color currColor;
 	private Color[] chaseColors;
 	private ArrayList<ArrayList<Dot>> dots;
-	private boolean chase, chaseBackwards, rainbow;
+	private boolean chase, horizontal, goingDown, chaseBackwards, rainbow;
 	
 	public Dots() {
 		super();
@@ -21,16 +21,14 @@ public class Dots implements Visual {
 		border = 2;
 		nHor = 0;
 		nVert = 0;
-		chaseCurrX = 0;
-		chaseCurrY = 0;
 		chaseColorIndex = -1;
 		chaseSpeed = 1;
 		currColor = Color.RED;
 		chaseColors = new Color[]{Color.RED, Color.GREEN, Color.BLUE};
 		dots = new ArrayList<ArrayList<Dot>>();
 		chase = false;
-		chaseBackwards = true;
 		rainbow = false;
+		restartChase();
 	}
 	
 	public void draw(Graphics2D g, int w, int h) {
@@ -88,27 +86,7 @@ public class Dots implements Visual {
 							dots.get(chaseCurrY).get(chaseCurrX).setInRandomChaser(true);
 						}
 					} catch (java.lang.IndexOutOfBoundsException e) {}
-					if (chaseBackwards) {
-						chaseCurrX--;
-						if (chaseCurrX < 0) {
-							chaseCurrX = 0;
-							chaseBackwards = false;
-							chaseCurrY++;
-							if (chaseCurrY >= nVert) {
-								restartChase();
-							}
-						}
-					} else {
-						chaseCurrX++;
-						if (chaseCurrX > nHor - 1) {
-							chaseCurrX = nHor - 1;
-							chaseCurrY++;
-							chaseBackwards = true;
-							if (chaseCurrY >= nVert) {
-								restartChase();
-							}
-						}
-					}
+					moveChase();
 				}
 			}
 			// step all the individual dots
@@ -127,6 +105,102 @@ public class Dots implements Visual {
 				}
 			}
 		} catch (java.lang.IndexOutOfBoundsException e) {}
+	}
+	
+	private void moveChase() {
+		if (horizontal) {
+			if (goingDown) { // horizontal, going down
+				if (chaseBackwards) {
+					chaseCurrX--;
+					if (chaseCurrX < 0) {
+						chaseCurrX = 0;
+						chaseBackwards = false;
+						chaseCurrY++;
+						if (chaseCurrY >= nVert) {
+							restartChase();
+						}
+					}
+				} else {
+					chaseCurrX++;
+					if (chaseCurrX > nHor - 1) {
+						chaseCurrX = nHor - 1;
+						chaseBackwards = true;
+						chaseCurrY++;
+						if (chaseCurrY >= nVert) {
+							restartChase();
+						}
+					}
+				}
+			} else { // horizontal, going up
+				if (chaseBackwards) {
+					chaseCurrX--;
+					if (chaseCurrX < 0) {
+						chaseCurrX = 0;
+						chaseBackwards = false;
+						chaseCurrY--;
+						if (chaseCurrY < 0) {
+							restartChase();
+						}
+					}
+				} else {
+					chaseCurrX++;
+					if (chaseCurrX > nHor - 1) {
+						chaseCurrX = nHor - 1;
+						chaseBackwards = true;
+						chaseCurrY--;
+						if (chaseCurrY < 0) {
+							restartChase();
+						}
+					}
+				}
+			}
+		} else {
+			if (goingDown) { // vertical, going right
+				if (chaseBackwards) {
+					chaseCurrY--;
+					if (chaseCurrY < 0) {
+						chaseCurrY = 0;
+						chaseBackwards = false;
+						chaseCurrX++;
+						if (chaseCurrX >= nHor) {
+							restartChase();
+						}
+					}
+				} else {
+					chaseCurrY++;
+					if (chaseCurrY > nVert - 1) {
+						chaseCurrY = nVert - 1;
+						chaseBackwards = true;
+						chaseCurrX++;
+						if (chaseCurrX >= nHor) {
+							restartChase();
+						}
+					}
+				}
+			} else { // vertical, going left
+				if (chaseBackwards) {
+					chaseCurrY--;
+					if (chaseCurrY < 0) {
+						chaseCurrY = 0;
+						chaseBackwards = false;
+						chaseCurrX--;
+						if (chaseCurrX < 0) {
+							restartChase();
+						}
+					}
+				} else {
+					chaseCurrY++;
+					if (chaseCurrY > nVert - 1) {
+						chaseCurrY = nVert - 1;
+						chaseBackwards = true;
+						chaseCurrX--;
+						if (chaseCurrX < 0) {
+							restartChase();
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public int getSide() {
@@ -202,13 +276,24 @@ public class Dots implements Visual {
 	}
 	
 	private void restartChase() {
-		chaseBackwards = true;
-		chaseCurrX = nHor - 1;
-		chaseCurrY = 0;
+		horizontal = fiftyFifty();
+		goingDown = fiftyFifty();
+		chaseBackwards = fiftyFifty();
+		if (horizontal) { // horizontal
+			chaseCurrX = chaseBackwards ? nHor - 1 : 0; // upper right/left corner
+			chaseCurrY = goingDown ? 0 : nVert - 1; // going down/up
+		} else { // vertical
+			chaseCurrY = chaseBackwards ? nVert - 1 : 0; // bottom/top left corner
+			chaseCurrX = goingDown ? 0 : nHor - 1; // going right/left
+		}
 		chaseColorIndex++;
 		if (chaseColorIndex > chaseColors.length) {
 			chaseColorIndex = 0;
 		}
+	}
+	
+	private boolean fiftyFifty() {
+		return Math.random() < 0.5;
 	}
 	
 	class Dot {

@@ -26,6 +26,7 @@ import styles.strobe.StrobeControls;
 
 public class Frame extends JFrame implements MouseListener {
 	
+	public static final int NORMAL_MODE = 0, CYCLE_MODE = 1, RANDOMIZE_MODE = 2;
 	private int style, delay, screen;
 	private boolean cycle, randomize, showControls;
 	private Lights l;
@@ -105,6 +106,7 @@ public class Frame extends JFrame implements MouseListener {
 
 	public void setFullScreen(boolean fullScreen) {
 		GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		String chosenScreen = null;
 		if (gds.length > 0 && fullScreen) {
 			Object[] screens = new Object[gds.length];
 			for (int i = 0; i < gds.length; i++) {
@@ -112,7 +114,7 @@ public class Frame extends JFrame implements MouseListener {
 			    screens[i] = "Screen " + (i + 1) + "  [x=" + (int)bounds.getX() + ", y=" + (int)bounds.getY()
 			    		+ ", width=" + (int)bounds.getWidth() + ", height=" + (int)bounds.getHeight() + "]";
 			}
-			String chosenScreen = (String)JOptionPane.showInputDialog(
+			chosenScreen = (String)JOptionPane.showInputDialog(
 					this, "Please choose which screen you would like to use.", "Full Screen Options",
 					JOptionPane.PLAIN_MESSAGE, null, screens, screens[0]);
 			for (int i = 0; i < gds.length; i++) {
@@ -124,12 +126,16 @@ public class Frame extends JFrame implements MouseListener {
 		}
 		this.setLocation(gds[screen].getDefaultConfiguration().getBounds().x, this.getY());
 		if (fullScreen) {
-			setVisible(false);
-			dispose();
-			setUndecorated(true);
-			gds[screen].setFullScreenWindow(this);
-			setVisible(true);
-			hideControls();
+			if (chosenScreen != null) {
+				setVisible(false);
+				dispose();
+				setUndecorated(true);
+				gds[screen].setFullScreenWindow(this);
+				setVisible(true);
+				hideControls();
+			} else {
+				controls[style].setFullScreenCheckBoxFalse();
+			}
 		} else {
 			setVisible(false);
 			dispose();
@@ -148,11 +154,13 @@ public class Frame extends JFrame implements MouseListener {
 	
 	public void setCycle(boolean b) {
 		cycle = b;
+		randomize = false;
 		timer.start();
 	}
 	
 	public void setRandomize(boolean b) {
 		randomize = b;
+		cycle = false;
 		timer.start();
 	}
 	
@@ -165,7 +173,9 @@ public class Frame extends JFrame implements MouseListener {
 		timer.setDelay(ms);
 	}
 	
-	public void displayDelayDialog() {
+	public void displayDelayDialog(int mode) {
+		boolean wasPaused = l.isPaused();
+		l.setPaused(true);
 		JPanel pan=new JPanel();
 		pan.add(new JLabel("Choose the delay (in milliseconds) between new effects"));
 		JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, delay);
@@ -178,13 +188,19 @@ public class Frame extends JFrame implements MouseListener {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setDelay(delaySlider.getValue());
+				l.setPaused(wasPaused);
+				if (mode == 1) {
+					setCycle(true);
+				} else if (mode ==  2) {
+					setRandomize(true);
+				}
 				jd.dispose();
 			}
 		});
 		pan.add(delaySlider);
 		pan.add(button);
 		jd.add(pan);
-		jd.setSize(300, 150);
+		jd.setSize(380, 120);
         jd.setLocationRelativeTo(this);
         jd.setVisible(true);
 	}

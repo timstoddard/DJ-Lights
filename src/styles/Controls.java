@@ -42,11 +42,9 @@ public abstract class Controls extends JPanel {
 				if (0 <= index && index <= 4) {
 					f.updateStyle(index);
 				} else if (index == 5) {
-					f.displayDelayDialog();
-					f.setCycle(true);
+					f.displayDelayDialog(Frame.CYCLE_MODE);
 				} else if (index == 6) {
-					f.displayDelayDialog();
-					f.setRandomize(true);
+					f.displayDelayDialog(Frame.RANDOMIZE_MODE);
 				} 
 			}
 		});
@@ -131,6 +129,10 @@ public abstract class Controls extends JPanel {
 	
 	public void updateStyle(int style) {
 		styleChooser.setSelectedIndex(style);
+	}
+	
+	public void setFullScreenCheckBoxFalse() {
+		fullScreen.setSelected(false);
 	}
 	
 	public Frame getFrame() {
