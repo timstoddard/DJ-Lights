@@ -38,11 +38,11 @@ public abstract class Controls extends JPanel {
 		styleChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = ((JComboBox)e.getSource()).getSelectedIndex();
-				if (0 <= index && index <= 4) {
+				if (0 <= index && index <= styleChooser.getItemCount() - 3) {
 					f.updateStyle(index);
-				} else if (index == 5) {
+				} else if (index == styleChooser.getItemCount() - 2) {
 					f.displayDelayDialog(Frame.CYCLE_MODE);
-				} else if (index == 6) {
+				} else if (index == styleChooser.getItemCount() - 1) {
 					f.displayDelayDialog(Frame.RANDOMIZE_MODE);
 				} 
 			}
@@ -62,9 +62,9 @@ public abstract class Controls extends JPanel {
 		pause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				f.getLights().togglePause();
-				if (pause.getText().equals("Pause Effects")) {
+				if (f.getLights().isPaused()) {
 					pause.setText("Unpause Effects");
-				} else if (pause.getText().equals("Unpause Effects")) {
+				} else {
 					pause.setText("Pause Effects");
 				}
 			}

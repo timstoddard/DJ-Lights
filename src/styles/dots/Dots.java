@@ -46,10 +46,12 @@ public class Dots implements Visual {
 	}
 	
 	public void step(int w, int h) {
+		nHor = w / side;
+		nVert = h / side;
 		try {
 			// resize vertically if necessary
 			if (nVert < dots.size()) {
-				for (int i = dots.size() - 1; i > nVert; i--) {
+				for (int i = dots.size() - 1; i >= nVert; i--) {
 					dots.remove(i);
 				}
 			} else if (nVert > dots.size()) {
@@ -64,9 +66,9 @@ public class Dots implements Visual {
 			}
 			// resize horizontally if necessary
 			if (nHor < dots.get(0).size()) {
-				for (int i = dots.size(); i < nVert; i++) {
-					for (int j = dots.get(i).size() - 1; j > nHor; j--) {
-						dots.remove(j);
+				for (int i = 0; i < nVert; i++) {
+					for (int j = dots.get(i).size() - 1; j >= nHor; j--) {
+						dots.get(i).remove(j);
 					}
 				}
 			} else if (nHor > dots.get(0).size()) {
@@ -101,8 +103,7 @@ public class Dots implements Visual {
 					} else {
 						dots.get(i).get(j).step();
 						if (Math.random() < 0.8 / nHor / nVert) {
-							dots.get(i).set(j, rainbow ? new Dot(nextRainbow(currColor)) :
-								(chase ? new Dot(Color.BLACK) : new Dot(Color.RED)));
+							dots.get(i).set(j, rainbow ? new Dot(nextRainbow(currColor)) : new Dot(currColor));
 						}
 					}
 				}
@@ -245,7 +246,7 @@ public class Dots implements Visual {
 		// 255	0	128
 		
 		// g goes up, r goes down, b goes up, g goes down, r goes up, b goes down
-		int s = 1, r = c.getRed(), g = c.getGreen(), b = c.getBlue();
+		int s = 3, r = c.getRed(), g = c.getGreen(), b = c.getBlue();
 		if (r == 255 && g < 255 && b == 0) {
 			g = g + s > 255 ? 255 : g + s;
 		} else if (r > 0 && g == 255 && b == 0) {
