@@ -11,7 +11,7 @@ public class Dots implements Visual {
 	
 	private int side, border, nHor, nVert, chaseCurrX, chaseCurrY, chaseColorIndex, chaseSpeed;
 	private Color currColor;
-	private Color[] chaseColors;
+	private ArrayList<Color> chaseColors;
 	private ArrayList<ArrayList<Dot>> dots;
 	private boolean chase, horizontal, goingDown, chaseBackwards, rainbow;
 	
@@ -24,7 +24,7 @@ public class Dots implements Visual {
 		chaseColorIndex = -1;
 		chaseSpeed = 1;
 		currColor = Color.RED;
-		chaseColors = new Color[]{Color.RED, Color.GREEN, Color.BLUE};
+		chaseColors = generateChaseColors();
 		dots = new ArrayList<ArrayList<Dot>>();
 		chase = false;
 		rainbow = false;
@@ -38,7 +38,8 @@ public class Dots implements Visual {
 		try {
 			for (int i = 0; i < nVert; i++) {
 				for (int j = 0; j < nHor; j++) {
-					dots.get(i).get(j).draw(g, horSpace + border + j * side, vertSpace + border + i * side, side - border * 2, side - border * 2);
+					dots.get(i).get(j).draw(g, horSpace + border + j * side, vertSpace + border + i * side,
+							side - border * 2, side - border * 2);
 				}
 			}
 		} catch (java.lang.IndexOutOfBoundsException e) {}
@@ -57,7 +58,7 @@ public class Dots implements Visual {
 						dots.add(new ArrayList<Dot>());
 					}
 					for (int j = dots.get(i).size(); j < nHor; j++) {
-						dots.get(i).add(rainbow ? new Dot(nextRainbow(currColor)) : (chase ? new Dot(Color.BLACK) : new Dot(Color.RED)));
+						dots.get(i).add(new Dot());
 					}
 				}
 			}
@@ -71,7 +72,7 @@ public class Dots implements Visual {
 			} else if (nHor > dots.get(0).size()) {
 				for (int i = 0; i < nVert; i++) {
 					for (int j = dots.get(i).size(); j < nHor; j++) {
-						dots.get(i).add(rainbow ? new Dot(nextRainbow(currColor)) : (chase ? new Dot(Color.BLACK) : new Dot(Color.RED)));
+						dots.get(i).add(new Dot());
 					}
 				}
 			}
@@ -79,10 +80,11 @@ public class Dots implements Visual {
 			if (chase) {
 				for (int i = 0; i < chaseSpeed; i++) {
 					try {
-						dots.get(chaseCurrY).set(chaseCurrX, chaseColorIndex == chaseColors.length ? new Dot(randomColor()) : new Dot(chaseColors[chaseColorIndex]));
+						dots.get(chaseCurrY).set(chaseCurrX, chaseColorIndex == chaseColors.size() ?
+								new Dot(randomColor()) : new Dot(chaseColors.get(chaseColorIndex)));
 						if (chaseColorIndex == 0) {
 							dots.get(chaseCurrY).get(chaseCurrX).setInRandomChaser(false);
-						} else if (chaseColorIndex == chaseColors.length) {
+						} else if (chaseColorIndex == chaseColors.size()) {
 							dots.get(chaseCurrY).get(chaseCurrX).setInRandomChaser(true);
 						}
 					} catch (java.lang.IndexOutOfBoundsException e) {}
@@ -93,13 +95,14 @@ public class Dots implements Visual {
 			for (int i = 0; i < nVert; i++) {
 				for (int j = 0; j < nHor; j++) {
 					if (chase) {
-						if ((chaseColorIndex == 0 || chaseColorIndex == chaseColors.length) && dots.get(i).get(j).isInRandomChaser()) {
+						if ((chaseColorIndex == 0 || chaseColorIndex == chaseColors.size()) && dots.get(i).get(j).isInRandomChaser()) {
 							dots.get(i).get(j).setColor(randomColor());
 						}
 					} else {
 						dots.get(i).get(j).step();
 						if (Math.random() < 0.8 / nHor / nVert) {
-							dots.get(i).set(j, rainbow ? new Dot(nextRainbow(currColor)) : (chase ? new Dot(Color.BLACK) : new Dot(Color.RED)));
+							dots.get(i).set(j, rainbow ? new Dot(nextRainbow(currColor)) :
+								(chase ? new Dot(Color.BLACK) : new Dot(Color.RED)));
 						}
 					}
 				}
@@ -266,11 +269,15 @@ public class Dots implements Visual {
 	
 	public void toggleRainbow() {
 		rainbow = !rainbow;
+		if (rainbow) {
+			chase = false;
+		}
 	}
 	
 	public void toggleChase() {
 		chase = !chase;
 		if (chase) {
+			rainbow = false;
 			restartChase();
 		}
 	}
@@ -287,9 +294,19 @@ public class Dots implements Visual {
 			chaseCurrX = goingDown ? 0 : nHor - 1; // going right/left
 		}
 		chaseColorIndex++;
-		if (chaseColorIndex > chaseColors.length) {
+		if (chaseColorIndex > chaseColors.size()) {
 			chaseColorIndex = 0;
+			chaseColors = generateChaseColors();
 		}
+	}
+	
+	private ArrayList<Color> generateChaseColors() {
+		int n = (int)(3 + Math.random() * 5);
+		ArrayList<Color> colorList = new ArrayList<Color>();
+		for (int i = 0; i < n; i++) {
+			colorList.add(randomColor());
+		}
+		return colorList;
 	}
 	
 	private boolean fiftyFifty() {
@@ -305,7 +322,7 @@ public class Dots implements Visual {
 		public Dot() {
 			opacity = 0;
 			opDecrSpeed = 0.05;
-			c = Color.RED;
+			c = Color.BLACK;
 			inRandomChaser = false;
 		}
 		

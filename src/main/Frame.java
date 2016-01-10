@@ -1,21 +1,33 @@
 package main;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import styles.Controls;
 import styles.beam.BeamControls;
@@ -31,12 +43,12 @@ public class Frame extends JFrame implements MouseListener {
 	private boolean cycle, randomize, showControls;
 	private Lights l;
 	private Controls[] controls;
+	private ArrayList<Integer> includedEffects;
 	private Timer timer;
 	
 	public Frame() {
 		super("Turn Up");
-		style = 1;
-		delay = 1000;
+		style = 0;
 		screen = 0;
 		cycle = false;
 		randomize = false;
@@ -45,6 +57,7 @@ public class Frame extends JFrame implements MouseListener {
 		controls = new Controls[]{
 				new BeamControls(this), new DotsControls(this), new SeizureControls(this),
 				new SpinnerControls(this), new StrobeControls(this)};
+		includedEffects = generateIncludedEffects();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		add(l, BorderLayout.CENTER);
@@ -52,18 +65,18 @@ public class Frame extends JFrame implements MouseListener {
 		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		addMouseListener(this);
-		timer = new Timer(delay, new ActionListener() {
+		timer = new Timer(0, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cycle) {
 					style++;
-					style = style - controls.length >= 0 ? style - controls.length : style;
-					updateStyle(style);
+					style = style >= includedEffects.size() ? 0 : style;
+					updateStyle(includedEffects.get(style));
 				} else if (randomize) {
 					int oldStyle = style;
-					while (style == oldStyle || style == 1) {
-						style = (int)(Math.random() * controls.length);
+					while (style == oldStyle) {
+						style = (int)(Math.random() * includedEffects.size());
 					}
-					updateStyle(style);
+					updateStyle(includedEffects.get(style));
 				}
 			}
 		});
@@ -154,55 +167,128 @@ public class Frame extends JFrame implements MouseListener {
 	
 	public void setCycle(boolean b) {
 		cycle = b;
-		randomize = false;
+		if (cycle) {
+			randomize = false;
+			timer.start();
+		}
 		timer.start();
 	}
 	
 	public void setRandomize(boolean b) {
 		randomize = b;
-		cycle = false;
-		timer.start();
+		if (randomize) {
+			cycle = false;
+			timer.start();
+		}
 	}
 	
 	public int getDelay() {
-		return delay;
+		return timer.getDelay();
 	}
 	
 	public void setDelay(int ms) {
-		delay = ms;
 		timer.setDelay(ms);
 	}
 	
 	public void displayDelayDialog(int mode) {
-		boolean wasPaused = l.isPaused();
-		l.setPaused(true);
-		JPanel pan=new JPanel();
-		pan.add(new JLabel("Choose the delay (in milliseconds) between new effects"));
-		JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, delay);
+		includedEffects = generateIncludedEffects();
+		timer.stop();
+		JDialog dialog = new JDialog(this, "Full Screen Options", Dialog.ModalityType.APPLICATION_MODAL);
+		JLabel label = new JLabel("Choose the time (ms) between effects", SwingConstants.CENTER);
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, 10000);
 		delaySlider.setMajorTickSpacing(5000);
 		delaySlider.setMinorTickSpacing(1000);
 		delaySlider.setPaintTicks(true);
 		delaySlider.setPaintLabels(true);
-		JDialog jd=new JDialog();
-		JButton button = new JButton("Okay");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setDelay(delaySlider.getValue());
-				l.setPaused(wasPaused);
-				if (mode == 1) {
-					setCycle(true);
-				} else if (mode ==  2) {
-					setRandomize(true);
+		delaySlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent changeEvent) {
+				JSlider theSlider = (JSlider) changeEvent.getSource();
+				if (!theSlider.getValueIsAdjusting()) {
+					setDelay(delaySlider.getValue());
+					System.out.println(timer.getDelay());
 				}
-				jd.dispose();
 			}
 		});
-		pan.add(delaySlider);
-		pan.add(button);
-		jd.add(pan);
-		jd.setSize(380, 120);
-        jd.setLocationRelativeTo(this);
-        jd.setVisible(true);
+		JPanel delayPanel = new JPanel(new BorderLayout());
+		delayPanel.add(label, BorderLayout.NORTH);
+		delayPanel.add(delaySlider, BorderLayout.SOUTH);
+		JButton cancel = new JButton("Cancel");
+		cancel.setSize(80, 20);
+		cancel.setMaximumSize(new Dimension(80, 20));
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		JButton okay = new JButton("OK");
+		okay.setSize(80, 20);
+		okay.setMaximumSize(new Dimension(80, 20));
+		okay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
+				if (mode == 0) {
+					setCycle(false);
+					setRandomize(false);
+				} else if (mode == CYCLE_MODE) {
+					setCycle(true);
+				} else if (mode ==  RANDOMIZE_MODE) {
+					setRandomize(true);
+				}
+				Collections.sort(includedEffects);
+				l.setPaused(false);
+			}
+		});
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(cancel);
+		buttonPanel.add(okay);
+		JCheckBox[] cbs = new JCheckBox[]{
+				new JCheckBox("Beams"), new JCheckBox("Dots"), new JCheckBox("Madness"), new JCheckBox("Spinner"), new JCheckBox("Strobe")
+		};
+		JPanel checkBoxPanel = new JPanel(new GridLayout(cbs.length, 1));
+		JLabel checkBoxLabel = new JLabel("Choose which visual effects you would like to include", SwingConstants.CENTER);
+		checkBoxLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		checkBoxPanel.add(checkBoxLabel);
+		for (JCheckBox cb : cbs) {
+			cb.setAlignmentX(Component.CENTER_ALIGNMENT);
+			checkBoxPanel.add(cb);
+			cb.setSelected(true);
+			cb.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					for (int i = 0; i < cbs.length; i++) {
+						if (cb.getText().equals(cbs[i].getText())) {
+							if (cb.isSelected() && !includedEffects.contains(i)) {
+								includedEffects.add(i);
+							} else if (!cb.isSelected() && includedEffects.contains(i)) {
+								includedEffects.remove(includedEffects.indexOf(i));
+							}
+						}
+					}
+				}
+			});
+		}
+		checkBoxPanel.setMaximumSize(new Dimension(100, getHeight() / 2));
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(Box.createVerticalStrut(10));
+		panel.add(delayPanel);
+		panel.add(Box.createVerticalStrut(10));
+		panel.add(checkBoxLabel);
+		panel.add(checkBoxPanel);
+		panel.add(buttonPanel);
+	    dialog.add(panel);
+	    int width = 420, height = 180 + 20 * cbs.length;
+	    dialog.setBounds(new Rectangle((getWidth() - width) / 2, (getHeight() - height) / 2, width, height));
+	    dialog.setVisible(true);
+	    dialog.setModal(true);
+	}
+	
+	private ArrayList<Integer> generateIncludedEffects() {
+		ArrayList<Integer> temp = new ArrayList<Integer>();
+		for (int i = 0; i < controls.length; i++) {
+			temp.add(i);
+		}
+		return temp;
 	}
 	
 	public void mouseClicked(MouseEvent e) {}
