@@ -131,7 +131,7 @@ public class Frame extends JFrame implements MouseListener {
 	public void setFullScreen(boolean fullScreen) {
 		GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		String chosenScreen = null;
-		if (gds.length > 0 && fullScreen) {
+		if (gds.length > 1 && fullScreen) {
 			Object[] screens = new Object[gds.length];
 			for (int i = 0; i < gds.length; i++) {
 			    Rectangle bounds = gds[i].getDefaultConfiguration().getBounds();
@@ -141,6 +141,10 @@ public class Frame extends JFrame implements MouseListener {
 			chosenScreen = (String)JOptionPane.showInputDialog(
 					this, "Please choose which screen you would like to use.", "Full Screen Options",
 					JOptionPane.PLAIN_MESSAGE, null, screens, screens[0]);
+			if (chosenScreen == null) {
+				controlPanel.setFullScreenUnselected();
+				return;
+			}
 			for (int i = 0; i < gds.length; i++) {
 				if (chosenScreen == screens[i]) {
 					screen = i;
@@ -150,7 +154,7 @@ public class Frame extends JFrame implements MouseListener {
 		}
 		this.setLocation(gds[screen].getDefaultConfiguration().getBounds().x, this.getY());
 		if (fullScreen) {
-			if (chosenScreen != null) {
+			if (gds.length == 1 || chosenScreen != null) {
 				setVisible(false);
 				dispose();
 				setUndecorated(true);

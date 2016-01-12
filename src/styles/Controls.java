@@ -1,6 +1,5 @@
 package styles;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -136,5 +135,9 @@ public class Controls extends JPanel {
 	
 	public void updateStyle(int style) {
 		styleChooser.setSelectedIndex(style);
+	}
+	
+	public void setFullScreenUnselected() {
+		fullScreen.setSelected(false);
 	}
 }
