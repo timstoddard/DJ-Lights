@@ -125,7 +125,9 @@ public class DotsControls extends Controls {
 		chaseSpeedPanel.setLayout(new GridLayout(2, 1));
 		chaseSpeedPanel.add(chaseSpeedLabel);
 		chaseSpeedPanel.add(chaseSpeed);
-		
-		addPanels(new JPanel[]{sideSizePanel, borderSizePanel, buttonPanel, chaseSpeedPanel});
+	}
+	
+	public JPanel[] getPanels() {
+		return new JPanel[]{sideSizePanel, borderSizePanel, buttonPanel, chaseSpeedPanel};
 	}
 }

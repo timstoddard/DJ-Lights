@@ -80,7 +80,9 @@ public class StrobeControls extends Controls {
 		waitTimePanel.setLayout(new BoxLayout(waitTimePanel, BoxLayout.Y_AXIS));
 		waitTimePanel.add(waitTimeLabel);
 		waitTimePanel.add(waitTime);
-		
-		addPanels(new JPanel[]{strobeTimePanel, waitTimePanel});
+	}
+	
+	public JPanel[] getPanels() {
+		return new JPanel[]{strobeTimePanel, waitTimePanel};
 	}
 }

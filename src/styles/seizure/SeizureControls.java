@@ -151,8 +151,10 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
 		gridLabelPanel = new JPanel(new BorderLayout());
 		gridLabelPanel.add(gridLabel, BorderLayout.NORTH);
 		gridLabelPanel.add(gridAndCheckPanel, BorderLayout.SOUTH);
-		
-		addPanels(new JPanel[]{nPanel, borderPanel, cornerPanel, gridLabelPanel});
+	}
+	
+	public JPanel[] getPanels() {
+		return new JPanel[]{nPanel, borderPanel, cornerPanel, gridLabelPanel};
 	}
 
 	public void stateChanged(ChangeEvent e) {

@@ -1,5 +1,6 @@
 package styles;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -18,10 +19,10 @@ import javax.swing.event.ChangeListener;
 
 import main.Frame;
 
-public abstract class Controls extends JPanel {
+public class Controls extends JPanel {
 	
 	private Frame f;
-	private JPanel basicControls, basicControlsMini, refTimePanel;
+	private JPanel basicControls, basicControlsMini, refTimePanel, currEffectControls;
 	private JComboBox styleChooser;
 	private JCheckBox fullScreen;
 	private JSlider refTime;
@@ -30,6 +31,7 @@ public abstract class Controls extends JPanel {
 	public Controls(Frame f) {
 		super();
 		this.f = f;
+		currEffectControls = new JPanel();
 	}
 	
 	public void basicPanel() {
@@ -79,8 +81,8 @@ public abstract class Controls extends JPanel {
 		});
 		add(close);
 		
-		// slider for refresh time
-		refTime = new JSlider(JSlider.HORIZONTAL, 0, 300, f.getLights().getRefTime());
+		// slider for refresh time -- probably not going to be included in final product
+		refTime = new JSlider(JSlider.HORIZONTAL, 0, 40, f.getLights().getRefTime());
 		refTime.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
@@ -89,8 +91,8 @@ public abstract class Controls extends JPanel {
 				}
 			}
 		});
-		refTime.setMajorTickSpacing(100);
-		refTime.setMinorTickSpacing(20);
+		refTime.setMajorTickSpacing(10);
+		refTime.setMinorTickSpacing(2);
 		refTime.setPaintTicks(true);
 		refTime.setPaintLabels(true);
 		refTime.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -114,27 +116,25 @@ public abstract class Controls extends JPanel {
 		basicControls.setBorder(BorderFactory.createLoweredBevelBorder());
 	}
 	
-	public void addPanels(JPanel[] panels) {
-		// settings for the control panel
-		JPanel everything = new JPanel();
+	public void clearAndAddPanels(JPanel[] panels) {
+		currEffectControls.removeAll();
+		currEffectControls.revalidate();
 		for (JPanel panel : panels) {
-			everything.add(panel);
+			currEffectControls.add(panel);
 		}
-		everything.setBorder(BorderFactory.createLoweredBevelBorder());
-		add(everything);
+		currEffectControls.setBorder(BorderFactory.createLoweredBevelBorder());
+		add(currEffectControls);
 	}
 	
-	public abstract void createPanel();
-	
-	public void updateStyle(int style) {
-		styleChooser.setSelectedIndex(style);
-	}
-	
-	public void setFullScreenCheckBoxFalse() {
-		fullScreen.setSelected(false);
+	public JPanel[] getPanels() {
+		return null;
 	}
 	
 	public Frame getFrame() {
 		return f;
+	}
+	
+	public void updateStyle(int style) {
+		styleChooser.setSelectedIndex(style);
 	}
 }

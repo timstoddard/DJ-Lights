@@ -39,21 +39,33 @@ import styles.strobe.StrobeControls;
 public class Frame extends JFrame implements MouseListener {
 	
 	public static final int NORMAL_MODE = 0, CYCLE_MODE = 1, RANDOMIZE_MODE = 2;
-	private int style, delay, screen;
+	private int style, cycleIndex, randIndex, screen;
 	private boolean cycle, randomize, showControls;
 	private Lights l;
+	private Controls controlPanel;
 	private Controls[] controls;
 	private ArrayList<Integer> includedEffects;
 	private Timer timer;
 	
 	public Frame() {
 		super("Turn Up");
+	}
+	
+	public Frame(String title) {
+		super(title);
+	}
+	
+	public void createFrame() {
 		style = 0;
+		cycleIndex = 0;
+		randIndex = 0;
 		screen = 0;
 		cycle = false;
 		randomize = false;
 		showControls = false;
 		l = new Lights(style);
+		controlPanel = new Controls(this);
+		controlPanel.basicPanel();
 		controls = new Controls[]{
 				new BeamControls(this), new DotsControls(this), new SeizureControls(this),
 				new SpinnerControls(this), new StrobeControls(this)};
@@ -68,15 +80,14 @@ public class Frame extends JFrame implements MouseListener {
 		timer = new Timer(0, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cycle) {
-					style++;
-					style = style >= includedEffects.size() ? 0 : style;
-					updateStyle(includedEffects.get(style));
+					updateStyle(includedEffects.get(cycleIndex));
+					cycleIndex = cycleIndex + 1 >= includedEffects.size() ? 0 : cycleIndex + 1;
 				} else if (randomize) {
-					int oldStyle = style;
-					while (style == oldStyle) {
-						style = (int)(Math.random() * includedEffects.size());
+					updateStyle(includedEffects.get(randIndex));
+					int oldRandIndex = randIndex;
+					while (randIndex == oldRandIndex) {
+						randIndex = (int)(Math.random() * includedEffects.size());
 					}
-					updateStyle(includedEffects.get(style));
 				}
 			}
 		});
@@ -87,8 +98,8 @@ public class Frame extends JFrame implements MouseListener {
 		getContentPane().removeAll();
 		getContentPane().revalidate();
 		add(l, BorderLayout.CENTER);
-		controls[style].updateStyle(style);
-		add(controls[style], BorderLayout.SOUTH);
+		controlPanel.clearAndAddPanels(controls[style].getPanels());
+		add(controlPanel, BorderLayout.SOUTH);
 		getContentPane().repaint();
 	}
 	
@@ -146,8 +157,6 @@ public class Frame extends JFrame implements MouseListener {
 				gds[screen].setFullScreenWindow(this);
 				setVisible(true);
 				hideControls();
-			} else {
-				controls[style].setFullScreenCheckBoxFalse();
 			}
 		} else {
 			setVisible(false);
@@ -169,15 +178,16 @@ public class Frame extends JFrame implements MouseListener {
 		cycle = b;
 		if (cycle) {
 			randomize = false;
+			cycleIndex = 0;
 			timer.start();
 		}
-		timer.start();
 	}
 	
 	public void setRandomize(boolean b) {
 		randomize = b;
 		if (randomize) {
 			cycle = false;
+			randIndex = 0;
 			timer.start();
 		}
 	}
@@ -206,7 +216,6 @@ public class Frame extends JFrame implements MouseListener {
 				JSlider theSlider = (JSlider) changeEvent.getSource();
 				if (!theSlider.getValueIsAdjusting()) {
 					setDelay(delaySlider.getValue());
-					System.out.println(timer.getDelay());
 				}
 			}
 		});
@@ -218,7 +227,7 @@ public class Frame extends JFrame implements MouseListener {
 		cancel.setMaximumSize(new Dimension(80, 20));
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				dialog.dispose();
 			}
 		});
 		JButton okay = new JButton("OK");
@@ -301,14 +310,44 @@ public class Frame extends JFrame implements MouseListener {
 		} else if (button == MouseEvent.BUTTON3) {
 			cycle = false;
 			randomize = false;
+			controlPanel.updateStyle(style);
 		}
 	}
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	
+	private static boolean isInt(String s) {
+		if (s == null || s.equals("")) {
+			return false;
+		}
+		for (char c : s.toCharArray()) {
+	        if (!Character.isDigit(c)) {
+	        	return false;
+	        }
+	    }
+	    return true;
+	}
+	
 	public static void main(String[] args) {
-		Frame frame = new Frame();
-		//Frame frame2 = new Frame();
+		String frames = "";
+		int failedAttempts = 0;
+		while (!isInt(frames)) {
+			frames = (String)JOptionPane.showInputDialog(
+	                null, "How many frames do you want?\n" +
+	                		(failedAttempts > 0 ? "Please enter in integer greater than zero."
+	                				: "WARNING: If you make a lot of frames,\nyour computer may run very slowly!"),
+	                "Number of Frames", JOptionPane.PLAIN_MESSAGE, null, null, "1");
+			if (frames == null) {
+				//frames = "1";
+				//break;
+				System.exit(1);
+			}
+			failedAttempts++;
+		}
+		for (int i = 0; i < Integer.parseInt(frames); i++) {
+			Frame frame = new Frame("Turn Up" + (Integer.parseInt(frames) > 1 ? " " + (i + 1) : "!"));
+			frame.createFrame();
+		}
 	}
 }

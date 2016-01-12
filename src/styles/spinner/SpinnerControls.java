@@ -87,7 +87,9 @@ public class SpinnerControls extends Controls {
 		rotSpeedPanel.setLayout(new BoxLayout(rotSpeedPanel, BoxLayout.Y_AXIS));
 		rotSpeedPanel.add(rotSpeedLabel);
 		rotSpeedPanel.add(rotSpeed);
-		
-		addPanels(new JPanel[]{layersPanel, radiusPanel, rotSpeedPanel});
+	}
+	
+	public JPanel[] getPanels() {
+		return new JPanel[]{layersPanel, radiusPanel, rotSpeedPanel};
 	}
 }

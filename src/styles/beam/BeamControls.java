@@ -77,8 +77,10 @@ public class BeamControls extends Controls implements ActionListener {
 		if (style2.isSelected()) {
 			maxBeamSize.setEnabled(false);
 		}
-		
-		addPanels(new JPanel[]{stylePanel, maxBeamPanel});
+	}
+	
+	public JPanel[] getPanels() {
+		return new JPanel[]{stylePanel, maxBeamPanel};
 	}
 
 	public void actionPerformed(ActionEvent e) {
