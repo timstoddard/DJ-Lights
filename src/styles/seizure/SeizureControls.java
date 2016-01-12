@@ -55,6 +55,7 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
 		
 		// slider for border size
 		borderSize = new JSlider(JSlider.HORIZONTAL, 0, 10, getFrame().getLights().getSeizure().getBorderSize());
+		borderSize.setSnapToTicks(true);
 		borderSize.addChangeListener(this);
 		borderSize.setMajorTickSpacing(5);
 		borderSize.setMinorTickSpacing(1);
@@ -70,6 +71,7 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
 		
 		// slider for corner rounding
 		cornerRound = new JSlider(JSlider.HORIZONTAL, 0, 20, getFrame().getLights().getSeizure().getCornerSize());
+		cornerRound.setSnapToTicks(true);
 		cornerRound.addChangeListener(this);
 		cornerRound.setMajorTickSpacing(5);
 		cornerRound.setMinorTickSpacing(1);

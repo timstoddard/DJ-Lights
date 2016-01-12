@@ -58,6 +58,7 @@ public class BeamControls extends Controls implements ActionListener {
 		
 		// slider for beam number
 		maxBeamSize = new JSlider(JSlider.HORIZONTAL, 0, 10, getFrame().getLights().getBeam().getMaxBeams());
+		maxBeamSize.setSnapToTicks(true);
 		maxBeamSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getFrame().getLights().getBeam().setMaxBeams(maxBeamSize.getValue());

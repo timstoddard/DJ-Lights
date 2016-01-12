@@ -170,6 +170,7 @@ public class Frame extends JFrame implements MouseListener {
 			setResizable(true);
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
 			setVisible(true);
+			this.setFocusableWindowState(true);
 		}
 		repaint();
 	}
@@ -211,6 +212,7 @@ public class Frame extends JFrame implements MouseListener {
 		JLabel label = new JLabel("Choose the time (ms) between effects", SwingConstants.CENTER);
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, 10000);
+		delaySlider.setSnapToTicks(true);
 		delaySlider.setMajorTickSpacing(5000);
 		delaySlider.setMinorTickSpacing(1000);
 		delaySlider.setPaintTicks(true);

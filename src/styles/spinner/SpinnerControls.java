@@ -35,6 +35,7 @@ public class SpinnerControls extends Controls {
 		
 		// slider for number of layers
 		layers = new JSlider(JSlider.HORIZONTAL, 2, 8, getFrame().getLights().getSpinner().getLayers());
+		layers.setSnapToTicks(true);
 		layers.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getFrame().getLights().getSpinner().setLayers(layers.getValue());
@@ -53,6 +54,7 @@ public class SpinnerControls extends Controls {
 		
 		// slider for the radius
 		radius = new JSlider(JSlider.HORIZONTAL, 10, 40, getFrame().getLights().getSpinner().getRadius());
+		radius.setSnapToTicks(true);
 		radius.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getFrame().getLights().getSpinner().setRadius(radius.getValue());
@@ -72,6 +74,7 @@ public class SpinnerControls extends Controls {
 		
 		// slider for the speed of rotation
 		rotSpeed = new JSlider(JSlider.HORIZONTAL, 1, 10, getFrame().getLights().getSpinner().getRotationSpeed());
+		rotSpeed.setSnapToTicks(true);
 		rotSpeed.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getFrame().getLights().getSpinner().setRotationSpeed(rotSpeed.getValue());

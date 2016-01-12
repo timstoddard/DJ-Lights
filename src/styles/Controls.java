@@ -82,6 +82,7 @@ public class Controls extends JPanel {
 		
 		// slider for refresh time -- probably not going to be included in final product
 		refTime = new JSlider(JSlider.HORIZONTAL, 0, 40, f.getLights().getRefTime());
+		refTime.setSnapToTicks(true);
 		refTime.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();

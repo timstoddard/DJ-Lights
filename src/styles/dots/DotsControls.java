@@ -40,6 +40,7 @@ public class DotsControls extends Controls {
 		
 		// slider for side size
 		sideSize = new JSlider(JSlider.HORIZONTAL, 10, 200, getFrame().getLights().getDots().getSide());
+		sideSize.setSnapToTicks(true);
 		sideSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getFrame().getLights().getDots().setSide(sideSize.getValue());
@@ -59,6 +60,7 @@ public class DotsControls extends Controls {
 		
 		// slider for border size
 		borderSize = new JSlider(JSlider.HORIZONTAL, 0, 30, getFrame().getLights().getDots().getBorder());
+		borderSize.setSnapToTicks(true);
 		borderSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				getFrame().getLights().getDots().setBorder(borderSize.getValue());
