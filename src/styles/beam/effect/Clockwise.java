@@ -31,7 +31,7 @@ public class Clockwise extends Effect {
 		}
 		if (dirCount <= 0) {
 			dirCount = dirCount();
-			switchDirection();
+			//switchDirection();
 		}
 		dirCount--;
 		if (colorCount <= 0) {
@@ -41,7 +41,7 @@ public class Clockwise extends Effect {
 		colorCount--;
 	}
 	
-	private void switchDirection() {
+	public void switchDirection() {
 		dir *= -1;
 	}
 	

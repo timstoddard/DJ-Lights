@@ -7,5 +7,10 @@ public interface Visual {
 	public void draw(Graphics2D g, int w, int h);
 	
 	public void step(int w, int h);
-
+	
+	public void hat();
+	
+	public void snare();
+	
+	public void kick();
 }

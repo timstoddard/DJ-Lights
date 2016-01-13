@@ -18,6 +18,8 @@ public abstract class Effect {
 	
 	public abstract void step();
 	
+	public abstract void switchDirection();
+	
 	public boolean getDone() {
 		return done;
 	}

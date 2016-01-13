@@ -1,4 +1,5 @@
 package main;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -29,6 +30,7 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import soundin.BeatDetector;
 import styles.Controls;
 import styles.beam.BeamControls;
 import styles.dots.DotsControls;
@@ -46,6 +48,8 @@ public class Frame extends JFrame implements MouseListener {
 	private Controls[] controls;
 	private ArrayList<Integer> includedEffects;
 	private Timer timer;
+	private JFrame externalControls; // implement this!!
+	private BeatDetector bd;
 	
 	public Frame() {
 		super("Turn Up");
@@ -124,6 +128,18 @@ public class Frame extends JFrame implements MouseListener {
 		}
 	}
 	
+	public void hat() {
+		l.hat();
+	}
+	
+	public void snare() {
+		l.snare();
+	}
+	
+	public void kick() {
+		l.kick();
+	}
+	
 	public Lights getLights() {
 		return l;
 	}
@@ -170,7 +186,6 @@ public class Frame extends JFrame implements MouseListener {
 			setResizable(true);
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
 			setVisible(true);
-			this.setFocusableWindowState(true);
 		}
 		repaint();
 	}
@@ -322,38 +337,4 @@ public class Frame extends JFrame implements MouseListener {
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	
-	private static boolean isInt(String s) {
-		if (s == null || s.equals("")) {
-			return false;
-		}
-		for (char c : s.toCharArray()) {
-	        if (!Character.isDigit(c)) {
-	        	return false;
-	        }
-	    }
-	    return true;
-	}
-	
-	public static void main(String[] args) {
-		String frames = "";
-		int failedAttempts = 0;
-		while (!isInt(frames)) {
-			frames = (String)JOptionPane.showInputDialog(
-	                null, "How many frames do you want?\n" +
-	                		(failedAttempts > 0 ? "Please enter in integer greater than zero."
-	                				: "WARNING: If you make a lot of frames,\nyour computer may run very slowly!"),
-	                "Number of Frames", JOptionPane.PLAIN_MESSAGE, null, null, "1");
-			if (frames == null) {
-				//frames = "1";
-				//break;
-				System.exit(1);
-			}
-			failedAttempts++;
-		}
-		for (int i = 0; i < Integer.parseInt(frames); i++) {
-			Frame frame = new Frame("Turn Up" + (Integer.parseInt(frames) > 1 ? " " + (i + 1) : "!"));
-			frame.createFrame();
-		}
-	}
 }

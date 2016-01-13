@@ -15,7 +15,7 @@ public class Beam implements Visual {
 	private boolean lightsOn;
 	private ArrayList<Point> points;
 	private ArrayList<double[][]> style1Thetas;
-	private Effect[][] effects;
+	private Effect[] effects;
 	
 	public Beam() {
 		super();
@@ -24,9 +24,9 @@ public class Beam implements Visual {
 		lightsOn = true;
 		points = new ArrayList<Point>();
 		style1Thetas = new ArrayList<double[][]>();//new double[(int)Math.round(Math.random() * maxBeams)][2];
-		effects = new Effect[1][6];
+		effects = new Effect[6];
 		for (int i = 0; i < 6; i++) {
-			effects[0][i] = new Clockwise();
+			effects[i] = new Clockwise();
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class Beam implements Visual {
 								.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
 				}
 				} else if (style == 2) {
-					effects[0][i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+					effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
 				}
 			}
 		}
@@ -78,7 +78,7 @@ public class Beam implements Visual {
 						style1Thetas.set(i, thetas);
 					}
 				} else if (style == 2) {
-					effects[0][i].step();
+					effects[i].step();
 				}
 			}
 		}
@@ -110,5 +110,22 @@ public class Beam implements Visual {
 
 	public void setStyle(int style) {
 		this.style = style;
+	}
+
+	@Override
+	public void hat() {
+		
+	}
+
+	@Override
+	public void snare() {
+		
+	}
+
+	@Override
+	public void kick() {
+		for (int i = 0; i < effects.length; i++) {
+			effects[i].switchDirection();
+		}
 	}
 }

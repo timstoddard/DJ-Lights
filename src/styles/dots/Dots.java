@@ -356,4 +356,22 @@ public class Dots implements Visual {
 			this.inRandomChaser = inRandomChaser;
 		}
 	}
+
+	@Override
+	public void hat() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void snare() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void kick() {
+		// TODO Auto-generated method stub
+		
+	}
 }

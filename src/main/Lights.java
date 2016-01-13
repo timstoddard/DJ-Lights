@@ -19,7 +19,7 @@ public class Lights extends JPanel {
 	
 	public Lights(int style) {
 		super();
-		refTime = 40;
+		refTime = 30;
 		this.style = style;
 		paused = false;
 		effects = new Visual[]{
@@ -42,6 +42,18 @@ public class Lights extends JPanel {
 		try {Thread.sleep(Math.max(refTime - (end - start), 0));}
 		catch (InterruptedException e) {}
 		repaint();
+	}
+	
+	public void hat() {
+		effects[style].hat();
+	}
+	
+	public void snare() {
+		effects[style].snare();
+	}
+	
+	public void kick() {
+		effects[style].kick();
 	}
 	
 	public int getRefTime() {

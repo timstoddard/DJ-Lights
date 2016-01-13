@@ -1,8 +1,11 @@
 # DJ-Lights
 DJ Lights program
 
-This is a DJ Lights program I wrote using Java. There are currently 5 visual modes (Beams, Dots, Madness, Spinner, Strobe), as well as 2 mode switching options (Cycle and Random). The next feature that I am going to add is the ability to sync the visuals with music input from a microphone (built-in or otherwise).
+This is a DJ Lights program I wrote using Java. There are currently 5 visual modes (Beams, Dots, Madness, Spinner, Strobe), as well as 2 mode switching options (Cycle and Random). I recently added the ability for the program to detect beats via the microphone, and will soon be updating all of the visual effects to include reactivity to audio input.
 
 There is currently a bug where the dropdown menus in the control panel do not work in fullscreen. This is seemingly due to the behavior of the java fullscreen API. The best workaround I have found is to set all desired settings in windowed mode, then enter fullscreen and enjoy the show.
 
-Note: For my range sliders, I modified the code from https://github.com/ernieyu/Swing-range-slider.
+***Code Libraries Used***
+   -For my range sliders, I modified the code from https://github.com/ernieyu/Swing-range-slider
+   -For beat detection, I used the Minim audio library (https://github.com/ddf/Minim)
+   -Along with Minim, I also used the org.tritons.share package (http://tritonus.sourceforge.net/apidoc/org/tritonus/share/package-tree.html), the javazoom.spi package (http://www.javazoom.net/mp3spi/mp3spi.html), and the javazoom.jl package (http://www.java2s.com/Code/Jar/j/Downloadjl10jar.htm).

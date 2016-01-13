@@ -122,4 +122,22 @@ public class Spinner implements Visual {
 	private int movingCount() {
 		return moving ? (int)(20 + Math.random() * 10) : (int)(8 + Math.random() * 8);
 	}
+
+	@Override
+	public void hat() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void snare() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void kick() {
+		// TODO Auto-generated method stub
+		
+	}
 }

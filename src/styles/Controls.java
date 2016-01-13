@@ -126,10 +126,6 @@ public class Controls extends JPanel {
 		add(currEffectControls);
 	}
 	
-	public JPanel[] getPanels() {
-		return null;
-	}
-	
 	public Frame getFrame() {
 		return f;
 	}
@@ -140,5 +136,9 @@ public class Controls extends JPanel {
 	
 	public void setFullScreenUnselected() {
 		fullScreen.setSelected(false);
+	}
+	
+	public JPanel[] getPanels() {
+		return null;
 	}
 }

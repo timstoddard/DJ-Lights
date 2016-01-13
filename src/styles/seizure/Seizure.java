@@ -212,4 +212,22 @@ public class Seizure extends JPanel implements Visual {
 			setDirection(false, true, false, true);
 		}
 	}
+
+	@Override
+	public void hat() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void snare() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void kick() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -22,7 +22,7 @@ import javax.swing.event.ChangeListener;
 import main.*;
 import styles.Controls;
 
-public class SeizureControls extends Controls implements ChangeListener, ActionListener {
+public class SeizureControls extends Controls implements ChangeListener, ActionListener  {
 	
 	private JPanel nPanel, borderPanel, cornerPanel, gridPanel, gridAndCheckPanel, gridLabelPanel;
 	private JSlider nSize, borderSize, cornerRound;

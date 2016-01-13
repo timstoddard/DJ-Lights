@@ -82,4 +82,22 @@ public class Strobe implements Visual {
 	private int strobeCount() {
 		return on ? (int)(minStrobeOn + Math.random() * (maxStrobeOn - minStrobeOn)) : (int)(minStrobeWait + Math.random() * (maxStrobeWait - minStrobeWait));
 	}
+
+	@Override
+	public void hat() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void snare() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void kick() {
+		// TODO Auto-generated method stub
+		
+	}
 }
