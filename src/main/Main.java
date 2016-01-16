@@ -10,7 +10,7 @@ public class Main {
 	public static void main(String[] args) {
 		Frame[] frames = loadFrames();
 		BeatDetector bd = new BeatDetector(frames);
-		bd.start(frames);
+		bd.start();
 	}
 	
 	private static Frame[] loadFrames() {
@@ -30,9 +30,11 @@ public class Main {
 				failedAttempts++;
 			}
 			frames = new Frame[Integer.parseInt(numOfFrames)];
-			for (int i = 0; i < frames.length; i++) {
-				frames[i] = new Frame("Turn Up " + (i + 1));
-				frames[i].createFrame();
+			if (frames.length == 1) {
+				frames[0] = new Frame("Turn Up!");
+			} else {
+				for (int i = 0; i < frames.length; i++) {
+					frames[i] = new Frame("Turn Up " + (i + 1));				}
 			}
 		} else {
 			frames = new Frame[]{new Frame("Turn Up!")};

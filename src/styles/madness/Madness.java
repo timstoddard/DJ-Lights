@@ -219,7 +219,9 @@ public class Madness extends JPanel implements Visual {
 
 	@Override
 	public void snare() {
-		
+		if (randomize) {
+			newDirection();
+		}
 	}
 
 	@Override

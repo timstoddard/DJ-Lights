@@ -47,13 +47,19 @@ public class ControlPanel extends JPanel {
 	}
 	
 	public void updateCurrEffectPanel(int style) {
-		currEffectControlsPanel.removeAll();
-		currEffectControlsPanel.revalidate();
-		for (JPanel panel : controls[style].getPanels()) {
-			currEffectControlsPanel.add(panel);
+		if (controls[style].getPanels().length == 0) {
+			remove(currEffectControlsPanel);
+		} else {
+			currEffectControlsPanel.removeAll();
+			currEffectControlsPanel.revalidate();
+			for (JPanel panel : controls[style].getPanels()) {
+				currEffectControlsPanel.add(panel);
+			}
+			currEffectControlsPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+			add(currEffectControlsPanel);
 		}
-		currEffectControlsPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-		add(currEffectControlsPanel);
+		revalidate();
+		repaint();
 	}
 	
 	public void setFullScreenUnselected() {

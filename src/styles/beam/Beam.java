@@ -12,6 +12,7 @@ import styles.beam.effect.*;
 public class Beam implements Visual {
 	
 	private int maxBeams, style;
+	private int[][] alignments;
 	private double speed;
 	private boolean lightsOn, flicker, align; // implement flicker to toggle whether lightsOn is used
 	private ArrayList<Point> points;
@@ -22,6 +23,7 @@ public class Beam implements Visual {
 		super();
 		maxBeams = 3;
 		style = 2;
+		alignments = new int[][]{{1},{2},{3},{4},{5},{6}};
 		speed = 1;
 		lightsOn = true;
 		flicker = false;
@@ -40,16 +42,21 @@ public class Beam implements Visual {
 		}
 		try {
 			if (flicker ? lightsOn : true) {
-				for (int i = 0; i < points.size(); i++) {
-					int x = (int)points.get(i).getX(), y = (int)points.get(i).getY();
-					if (style == 1) {
-						for (int j = 0; j < style1Thetas.get(i).length; j++) {
-							new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
-									new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
-									.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+				if (style == 1) {
+					for (int i = 0; i < points.size(); i++) {
+						int x = (int)points.get(i).getX(), y = (int)points.get(i).getY();
+							for (int j = 0; j < style1Thetas.get(i).length; j++) {
+								new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
+										new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
+										.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+							}
 					}
-					} else if (style == 2) {
-						effects[i % (points.size() / 2)].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+				} else if (style == 2) {
+					for (int i = 0; i < alignments.length; i++) {
+						for (int j = 0; j < alignments[i].length; j++) {
+							int x = (int)points.get(alignments[i][j] - 1).getX(), y = (int)points.get(alignments[i][j] - 1).getY();
+							effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+						}
 					}
 				}
 			}
@@ -116,6 +123,20 @@ public class Beam implements Visual {
 		this.style = style;
 	}
 
+	public void setFlicker(boolean flicker) {
+		this.flicker = flicker;
+	}
+
+	public void setAlignments(int[][] alignments) {
+		this.alignments = new int[alignments.length][];
+		for (int i = 0; i < alignments.length; i++) {
+			this.alignments[i] = new int[alignments[i].length];
+			for (int j = 0; j < alignments[i].length; j++) {
+				this.alignments[i][j] = alignments[i][j];
+			}
+		}
+	}
+
 	@Override
 	public void hat() {
 		for (int i = 0; i < effects.length; i++) {
@@ -141,7 +162,6 @@ public class Beam implements Visual {
 	
 	@Override
 	public void freqBands(boolean[] freqBands) {
-		// TODO Auto-generated method stub
 		
 	}
 

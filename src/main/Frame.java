@@ -31,21 +31,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import soundin.BeatDetector;
-import styles.BasicControls;
 import styles.ControlPanel;
-import styles.Controls;
-import styles.beam.BeamControls;
-import styles.blades.BladesControls;
-import styles.dots.DotsControls;
-import styles.madness.MadnessControls;
-import styles.rgb.RGBControls;
-import styles.spinner.SpinnerControls;
-import styles.strobe.StrobeControls;
 
 public class Frame extends JFrame implements MouseListener {
 	
 	public static final int NORMAL_MODE = 0, CYCLE_MODE = 1, RANDOMIZE_MODE = 2;
-	private int style, cycleIndex, randIndex, screen;
+	private int style, cycleIndex, randIndex, screen, refTime, sensitivity;
+	private double levelThreshold;
 	private boolean cycle, randomize, showControls;
 	private Lights lights;
 	private ControlPanel controlPanel;
@@ -55,15 +47,7 @@ public class Frame extends JFrame implements MouseListener {
 	private BeatDetector bd;
 	
 	/**
-	 * Creates a frame with default settings.
-	 * @param title
-	 */
-	public Frame() {
-		this("Turn Up");
-	}
-	
-	/**
-	 * Creates a frame with the specified title.
+	 * Creates a frame with a specified title and beat detector options
 	 * @param title
 	 */
 	public Frame(String title) {
@@ -72,11 +56,13 @@ public class Frame extends JFrame implements MouseListener {
 	}
 	
 	public void createFrame() {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		style = 0;
 		cycleIndex = 0;
 		randIndex = 0;
 		screen = 0;
+		refTime = 30;
+		sensitivity = 200;
+		levelThreshold = 0.2;
 		cycle = false;
 		randomize = false;
 		showControls = false;
@@ -95,6 +81,7 @@ public class Frame extends JFrame implements MouseListener {
 				if (cycle) {
 					updateStyle(includedEffects.get(cycleIndex));
 					cycleIndex = cycleIndex + 1 >= includedEffects.size() ? 0 : cycleIndex + 1;
+					System.out.println(style);
 				} else if (randomize) {
 					updateStyle(includedEffects.get(randIndex));
 					int oldRandIndex = randIndex;
@@ -209,6 +196,30 @@ public class Frame extends JFrame implements MouseListener {
 		return style;
 	}
 	
+	public int getRefTime() {
+		return refTime;
+	}
+
+	public void setRefTime(int refTime) {
+		this.refTime = refTime;
+	}
+
+	public int getSensitivity() {
+		return sensitivity;
+	}
+
+	public void setSensitivity(int sensitivity) {
+		this.sensitivity = sensitivity;
+	}
+
+	public double getLevelThreshold() {
+		return levelThreshold;
+	}
+
+	public void setLevelThreshold(double threshold) {
+		levelThreshold = threshold;
+	}
+	
 	public void setCycle(boolean b) {
 		cycle = b;
 		if (cycle) {
@@ -239,12 +250,12 @@ public class Frame extends JFrame implements MouseListener {
 		includedEffects = generateIncludedEffects();
 		timer.stop();
 		JDialog dialog = new JDialog(this, "Full Screen Options", Dialog.ModalityType.APPLICATION_MODAL);
-		JLabel label = new JLabel("Choose the time (ms) between effects", SwingConstants.CENTER);
+		JLabel label = new JLabel("Choose the time (seconds) between effects", SwingConstants.CENTER);
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, 10000);
+		JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 10);
 		delaySlider.setSnapToTicks(true);
-		delaySlider.setMajorTickSpacing(5000);
-		delaySlider.setMinorTickSpacing(1000);
+		delaySlider.setMajorTickSpacing(5);
+		delaySlider.setMinorTickSpacing(1);
 		delaySlider.setPaintTicks(true);
 		delaySlider.setPaintLabels(true);
 		delaySlider.addChangeListener(new ChangeListener() {

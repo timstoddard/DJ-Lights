@@ -1,6 +1,7 @@
 package styles;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,10 +21,10 @@ import main.Frame;
 
 public class BasicControls extends JPanel implements Controls {
 	
-	private JPanel basicControls, basicControlsMini, refTimePanel;
+	private JPanel basicControls, basicControlsMini, sliderPanel;
 	private JComboBox<?> styleChooser;
 	private JCheckBox fullScreen, externalControls;
-	private JSlider refTime;
+	private JSlider refTime, sensitivity, levelThreshold;
 	private JButton pause, close;
 	private Frame f;
 	
@@ -49,14 +50,12 @@ public class BasicControls extends JPanel implements Controls {
 				} 
 			}
 		});
-		//styleChooser.setSelectedIndex(f.getStyle());
 		
 		// toggles between windowed mode and fullscreen mode
 		fullScreen = new JCheckBox("Toggle Full Screen");
 		fullScreen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JCheckBox jcb = (JCheckBox)e.getSource();
-				f.setFullScreen(jcb.isSelected());
+				f.setFullScreen(fullScreen.isSelected());
 			}
 		});
 		
@@ -64,10 +63,12 @@ public class BasicControls extends JPanel implements Controls {
 		externalControls = new JCheckBox("Toggle External Controls");
 		externalControls.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JCheckBox jcb = (JCheckBox)e.getSource();
-				//f.setFullScreen(jcb.isSelected());
+				// toggle external controls
 			}
 		});
+		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length == 1) {
+			externalControls.setSelected(false);
+		}
 		
 		// pause button
 		pause = new JButton("Pause Effects");
@@ -92,14 +93,11 @@ public class BasicControls extends JPanel implements Controls {
 		add(close);
 		
 		// slider for refresh time -- probably not going to be included in final product
-		refTime = new JSlider(JSlider.HORIZONTAL, 0, 40, f.getLights().getRefTime());
+		refTime = new JSlider(JSlider.HORIZONTAL, 0, 40, f.getRefTime());
 		refTime.setSnapToTicks(true);
 		refTime.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JSlider source = (JSlider)e.getSource();
-				if (source.equals(refTime)) {
-					f.getLights().setRefTime(refTime.getValue());
-				}
+				f.setRefTime(refTime.getValue());
 			}
 		});
 		refTime.setMajorTickSpacing(10);
@@ -109,10 +107,46 @@ public class BasicControls extends JPanel implements Controls {
 		refTime.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JLabel refTimeLabel = new JLabel("Adjust refresh time (ms)");
 		refTimeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		refTimePanel = new JPanel();
-		refTimePanel.setLayout(new BoxLayout(refTimePanel, BoxLayout.Y_AXIS));
-		refTimePanel.add(refTimeLabel);
-		refTimePanel.add(refTime);
+		sliderPanel = new JPanel();
+		sliderPanel.setLayout(new GridLayout(6, 1));//new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
+		sliderPanel.add(refTimeLabel);
+		sliderPanel.add(refTime);
+		
+		// slider for sensitivity
+		sensitivity = new JSlider(JSlider.HORIZONTAL, 0, 1000, f.getSensitivity());
+		sensitivity.setSnapToTicks(true);
+		sensitivity.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				f.setSensitivity(sensitivity.getValue());
+			}
+		});
+		sensitivity.setMajorTickSpacing(250);
+		sensitivity.setMinorTickSpacing(50);
+		sensitivity.setPaintTicks(true);
+		sensitivity.setPaintLabels(true);
+		sensitivity.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JLabel sensitivityLabel = new JLabel("Adjust sensitivity");
+		sensitivityLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		sliderPanel.add(sensitivityLabel);
+		sliderPanel.add(sensitivity);
+		
+		// slider for level threshold
+		levelThreshold = new JSlider(JSlider.HORIZONTAL, 0, 100, (int)(f.getLevelThreshold()*100));
+		levelThreshold.setSnapToTicks(true);
+		levelThreshold.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				f.setLevelThreshold((double) levelThreshold.getValue() / 100);
+			}
+		});
+		levelThreshold.setMajorTickSpacing(25);
+		levelThreshold.setMinorTickSpacing(5);
+		levelThreshold.setPaintTicks(true);
+		levelThreshold.setPaintLabels(true);
+		levelThreshold.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JLabel levelThresholdLabel = new JLabel("Adjust level threshold");
+		levelThresholdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		sliderPanel.add(levelThresholdLabel);
+		sliderPanel.add(levelThreshold);
 		
 		basicControlsMini = new JPanel();
 		basicControlsMini.setLayout(new GridLayout(5, 1));
@@ -123,7 +157,7 @@ public class BasicControls extends JPanel implements Controls {
 		basicControlsMini.add(close);
 		basicControls = new JPanel();
 		basicControls.add(basicControlsMini);
-		basicControls.add(refTimePanel);
+		basicControls.add(sliderPanel);
 		basicControls.setBorder(BorderFactory.createLoweredBevelBorder());
 	}
 	

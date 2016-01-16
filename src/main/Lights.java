@@ -2,6 +2,8 @@ package main;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+
 import javax.swing.JPanel;
 
 import styles.Visual;
@@ -15,14 +17,13 @@ import styles.strobe.Strobe;
 
 public class Lights extends JPanel {
 	
-	private int refTime, style;
+	private int style;
 	private double speed;
 	private boolean paused;
 	private Visual[] effects;
 	
 	public Lights(int style) {
 		super();
-		refTime = 30;
 		this.style = style;
 		paused = false;
 		effects = new Visual[]{
@@ -34,7 +35,8 @@ public class Lights extends JPanel {
 		Graphics2D g = (Graphics2D)graphics;
 		super.paintComponent(g);
 		setBackground(Color.black);
-		
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		int w = getWidth(), h = getHeight();
 		effects[style].draw(g, w, h);
 		if (!paused) {
@@ -72,14 +74,6 @@ public class Lights extends JPanel {
 	
 	public void setSpeed(double speed) {
 		effects[style].setSpeed(speed);
-	}
-	
-	public int getRefTime() {
-		return refTime;
-	}
-
-	public void setRefTime(int refTime) {
-		this.refTime = refTime;
 	}
 	
 	public int getStyle() {
