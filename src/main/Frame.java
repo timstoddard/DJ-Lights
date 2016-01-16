@@ -31,10 +31,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import soundin.BeatDetector;
+import styles.BasicControls;
+import styles.ControlPanel;
 import styles.Controls;
 import styles.beam.BeamControls;
+import styles.blades.BladesControls;
 import styles.dots.DotsControls;
-import styles.seizure.SeizureControls;
+import styles.madness.MadnessControls;
+import styles.rgb.RGBControls;
 import styles.spinner.SpinnerControls;
 import styles.strobe.StrobeControls;
 
@@ -43,23 +47,32 @@ public class Frame extends JFrame implements MouseListener {
 	public static final int NORMAL_MODE = 0, CYCLE_MODE = 1, RANDOMIZE_MODE = 2;
 	private int style, cycleIndex, randIndex, screen;
 	private boolean cycle, randomize, showControls;
-	private Lights l;
-	private Controls controlPanel;
-	private Controls[] controls;
+	private Lights lights;
+	private ControlPanel controlPanel;
 	private ArrayList<Integer> includedEffects;
 	private Timer timer;
 	private JFrame externalControls; // implement this!!
 	private BeatDetector bd;
 	
+	/**
+	 * Creates a frame with default settings.
+	 * @param title
+	 */
 	public Frame() {
-		super("Turn Up");
+		this("Turn Up");
 	}
 	
+	/**
+	 * Creates a frame with the specified title.
+	 * @param title
+	 */
 	public Frame(String title) {
 		super(title);
+		createFrame();
 	}
 	
 	public void createFrame() {
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		style = 0;
 		cycleIndex = 0;
 		randIndex = 0;
@@ -67,16 +80,12 @@ public class Frame extends JFrame implements MouseListener {
 		cycle = false;
 		randomize = false;
 		showControls = false;
-		l = new Lights(style);
-		controlPanel = new Controls(this);
-		controlPanel.basicPanel();
-		controls = new Controls[]{
-				new BeamControls(this), new DotsControls(this), new SeizureControls(this),
-				new SpinnerControls(this), new StrobeControls(this)};
+		lights = new Lights(style);
+		controlPanel = new ControlPanel(this);
 		includedEffects = generateIncludedEffects();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		add(l, BorderLayout.CENTER);
+		add(lights, BorderLayout.CENTER);
 		setVisible(true);
 		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -101,8 +110,8 @@ public class Frame extends JFrame implements MouseListener {
 		showControls = true;
 		getContentPane().removeAll();
 		getContentPane().revalidate();
-		add(l, BorderLayout.CENTER);
-		controlPanel.clearAndAddPanels(controls[style].getPanels());
+		add(lights, BorderLayout.CENTER);
+		controlPanel.update(style);
 		add(controlPanel, BorderLayout.SOUTH);
 		getContentPane().repaint();
 	}
@@ -111,37 +120,43 @@ public class Frame extends JFrame implements MouseListener {
 		showControls = false;
 		getContentPane().removeAll();
 		getContentPane().revalidate();
-		add(l, BorderLayout.CENTER);
+		add(lights, BorderLayout.CENTER);
 		getContentPane().repaint();
 	}
 	
 	public void updateStyle(int style) {
 		this.style = style;
-		l.setStyle(style);
-		if (style == 4) {
-			l.restartStrobe();
-		}
-		if (showControls) {
-			showControls();
-		} else {
-			hideControls();
-		}
+		lights.setStyle(style);
+		controlPanel.update(style);
 	}
 	
 	public void hat() {
-		l.hat();
+		lights.hat();
 	}
 	
 	public void snare() {
-		l.snare();
+		lights.snare();
 	}
 	
 	public void kick() {
-		l.kick();
+		lights.kick();
+	}
+	
+	public void freqBands(boolean[] freqBands) {
+		lights.freqBands(freqBands);
+		
 	}
 	
 	public Lights getLights() {
-		return l;
+		return lights;
+	}
+	
+	public void setSpeed(double speed) {
+		lights.setSpeed(speed);
+	}
+	
+	public void repaintLights() {
+		lights.repaintLights();
 	}
 
 	public void setFullScreen(boolean fullScreen) {
@@ -257,7 +272,7 @@ public class Frame extends JFrame implements MouseListener {
 		okay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dialog.dispose();
-				if (mode == 0) {
+				if (mode == NORMAL_MODE) {
 					setCycle(false);
 					setRandomize(false);
 				} else if (mode == CYCLE_MODE) {
@@ -266,14 +281,16 @@ public class Frame extends JFrame implements MouseListener {
 					setRandomize(true);
 				}
 				Collections.sort(includedEffects);
-				l.setPaused(false);
+				lights.setPaused(false);
 			}
 		});
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(cancel);
 		buttonPanel.add(okay);
 		JCheckBox[] cbs = new JCheckBox[]{
-				new JCheckBox("Beams"), new JCheckBox("Dots"), new JCheckBox("Madness"), new JCheckBox("Spinner"), new JCheckBox("Strobe")
+				new JCheckBox("Beams"), new JCheckBox("Blades"), new JCheckBox("Dots"),
+				new JCheckBox("RGB"), new JCheckBox("Madness"), new JCheckBox("Spinner"),
+				new JCheckBox("Strobe")
 		};
 		JPanel checkBoxPanel = new JPanel(new GridLayout(cbs.length, 1));
 		JLabel checkBoxLabel = new JLabel("Choose which visual effects you would like to include", SwingConstants.CENTER);
@@ -315,7 +332,7 @@ public class Frame extends JFrame implements MouseListener {
 	
 	private ArrayList<Integer> generateIncludedEffects() {
 		ArrayList<Integer> temp = new ArrayList<Integer>();
-		for (int i = 0; i < controls.length; i++) {
+		for (int i = 0; i < controlPanel.length(); i++) {
 			temp.add(i);
 		}
 		return temp;
@@ -331,7 +348,7 @@ public class Frame extends JFrame implements MouseListener {
 		} else if (button == MouseEvent.BUTTON3) {
 			cycle = false;
 			randomize = false;
-			controlPanel.updateStyle(style);
+			controlPanel.updateStyleChooserIndex(style);
 		}
 	}
 	public void mouseReleased(MouseEvent e) {}

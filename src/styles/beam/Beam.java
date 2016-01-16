@@ -12,7 +12,8 @@ import styles.beam.effect.*;
 public class Beam implements Visual {
 	
 	private int maxBeams, style;
-	private boolean lightsOn;
+	private double speed;
+	private boolean lightsOn, flicker, align; // implement flicker to toggle whether lightsOn is used
 	private ArrayList<Point> points;
 	private ArrayList<double[][]> style1Thetas;
 	private Effect[] effects;
@@ -21,9 +22,12 @@ public class Beam implements Visual {
 		super();
 		maxBeams = 3;
 		style = 2;
+		speed = 1;
 		lightsOn = true;
+		flicker = false;
+		align = true;
 		points = new ArrayList<Point>();
-		style1Thetas = new ArrayList<double[][]>();//new double[(int)Math.round(Math.random() * maxBeams)][2];
+		style1Thetas = new ArrayList<double[][]>();
 		effects = new Effect[6];
 		for (int i = 0; i < 6; i++) {
 			effects[i] = new Clockwise();
@@ -35,20 +39,20 @@ public class Beam implements Visual {
 			drawLights(g, (int)points.get(i).getX(), (int)points.get(i).getY(), (int)(12 + Math.random() * 4));
 		}
 		try {
-		if (lightsOn) {
-			for (int i = 0; i < points.size(); i++) {
-				int x = (int)points.get(i).getX(), y = (int)points.get(i).getY();
-				if (style == 1) {
-					for (int j = 0; j < style1Thetas.get(i).length; j++) {
-						new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
-								new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
-								.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
-				}
-				} else if (style == 2) {
-					effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+			if (flicker ? lightsOn : true) {
+				for (int i = 0; i < points.size(); i++) {
+					int x = (int)points.get(i).getX(), y = (int)points.get(i).getY();
+					if (style == 1) {
+						for (int j = 0; j < style1Thetas.get(i).length; j++) {
+							new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
+									new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
+									.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+					}
+					} else if (style == 2) {
+						effects[i % (points.size() / 2)].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+					}
 				}
 			}
-		}
 		} catch (java.lang.IndexOutOfBoundsException e) {}
 		g.dispose();
 	}
@@ -78,7 +82,7 @@ public class Beam implements Visual {
 						style1Thetas.set(i, thetas);
 					}
 				} else if (style == 2) {
-					effects[i].step();
+					effects[i].step(speed);
 				}
 			}
 		}
@@ -114,7 +118,11 @@ public class Beam implements Visual {
 
 	@Override
 	public void hat() {
-		
+		for (int i = 0; i < effects.length; i++) {
+			if (Math.random() > 0.5) {
+				effects[i].switchColor();
+			}
+		}
 	}
 
 	@Override
@@ -125,7 +133,20 @@ public class Beam implements Visual {
 	@Override
 	public void kick() {
 		for (int i = 0; i < effects.length; i++) {
-			effects[i].switchDirection();
+			if (Math.random() > 0.5) {
+				effects[i].switchDirection();
+			}
 		}
+	}
+	
+	@Override
+	public void freqBands(boolean[] freqBands) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 }

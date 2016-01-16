@@ -9,7 +9,9 @@ import styles.Visual;
 
 public class Dots implements Visual {
 	
+	public final int NORMAL_MODE = 0, RAINBOW_MODE = 1, CHASE_MODE = 2;
 	private int side, border, nHor, nVert, chaseCurrX, chaseCurrY, chaseColorIndex, chaseSpeed;
+	private double speed;
 	private Color currColor;
 	private ArrayList<Color> chaseColors;
 	private ArrayList<ArrayList<Dot>> dots;
@@ -373,5 +375,16 @@ public class Dots implements Visual {
 	public void kick() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void freqBands(boolean[] freqBands) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 }

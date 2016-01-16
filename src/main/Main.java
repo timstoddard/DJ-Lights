@@ -1,31 +1,43 @@
 package main;
 
+import java.awt.GraphicsEnvironment;
+
 import javax.swing.JOptionPane;
 
 import soundin.BeatDetector;
 
 public class Main {
 	public static void main(String[] args) {
-		String numOfFrames = "";
-		int failedAttempts = 0;
-		while (!isInt(numOfFrames)) {
-			numOfFrames = (String)JOptionPane.showInputDialog(
-	                null, "How many frames do you want?\n" +
-	                (failedAttempts > 0 ? "Please enter in integer greater than zero."
-	                : "WARNING: If you make a lot of frames,\nyour computer may run very slowly!"),
-	                "Number of Frames", JOptionPane.PLAIN_MESSAGE, null, null, "1");
-			if (numOfFrames == null) {
-				System.exit(1);
-			}
-			failedAttempts++;
-		}
-		Frame[] frames = new Frame[Integer.parseInt(numOfFrames)];
-		for (int i = 0; i < frames.length; i++) {
-			frames[i] = new Frame("Turn Up" + (frames.length > 1 ? " " + (i + 1) : "!"));
-			frames[i].createFrame();
-		}
-		BeatDetector bd = new BeatDetector();
+		Frame[] frames = loadFrames();
+		BeatDetector bd = new BeatDetector(frames);
 		bd.start(frames);
+	}
+	
+	private static Frame[] loadFrames() {
+		Frame[] frames;
+		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length > 1) {
+			String numOfFrames = "";
+			int failedAttempts = 0;
+			while (!isInt(numOfFrames)) {
+				numOfFrames = (String)JOptionPane.showInputDialog(
+		                null, "How many frames do you want?\n" +
+		                (failedAttempts > 0 ? "Please enter in integer greater than zero."
+		                : "WARNING: If you make a lot of frames,\nyour computer may run very slowly!"),
+		                "Number of Frames", JOptionPane.PLAIN_MESSAGE, null, null, "1");
+				if (numOfFrames == null) {
+					System.exit(1);
+				}
+				failedAttempts++;
+			}
+			frames = new Frame[Integer.parseInt(numOfFrames)];
+			for (int i = 0; i < frames.length; i++) {
+				frames[i] = new Frame("Turn Up " + (i + 1));
+				frames[i].createFrame();
+			}
+		} else {
+			frames = new Frame[]{new Frame("Turn Up!")};
+		}
+		return frames;
 	}
 	
 	private static boolean isInt(String s) {

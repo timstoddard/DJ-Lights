@@ -1,4 +1,4 @@
-package styles.seizure;
+package styles.madness;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -20,27 +20,30 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import main.*;
+import styles.BasicControls;
 import styles.Controls;
 
-public class SeizureControls extends Controls implements ChangeListener, ActionListener  {
+public class MadnessControls extends JPanel implements ActionListener, Controls  {
 	
 	private JPanel nPanel, borderPanel, cornerPanel, gridPanel, gridAndCheckPanel, gridLabelPanel;
 	private JSlider nSize, borderSize, cornerRound;
 	private JRadioButton leftUp, leftStraight, leftDown, upStraight, center, downStraight, rightUp, rightStraight, rightDown;
 	private JCheckBox random;
+	private Madness madness;
 	
-	public SeizureControls(Frame f) {
-		super(f);
+	public MadnessControls(Madness madness) {
+		this.madness = madness;
 		createPanel();
 	}
 	
 	public void createPanel() {
-		super.removeAll();
-		super.basicPanel();
-		
 		// slider for n size
-		nSize = new JSlider(JSlider.HORIZONTAL, 0, 100, getFrame().getLights().getSeizure().getN());
-		nSize.addChangeListener(this);
+		nSize = new JSlider(JSlider.HORIZONTAL, 0, 100, madness.getN());
+		nSize.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				madness.updateN(Math.max(1, nSize.getValue()));
+			}
+		});
 		nSize.setMajorTickSpacing(50);
 		nSize.setMinorTickSpacing(10);
 		nSize.setPaintTicks(true);
@@ -54,9 +57,13 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
 		nPanel.add(nSize);
 		
 		// slider for border size
-		borderSize = new JSlider(JSlider.HORIZONTAL, 0, 10, getFrame().getLights().getSeizure().getBorderSize());
+		borderSize = new JSlider(JSlider.HORIZONTAL, 0, 10, madness.getBorderSize());
 		borderSize.setSnapToTicks(true);
-		borderSize.addChangeListener(this);
+		borderSize.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				madness.updateBorder(borderSize.getValue());
+			}
+		});
 		borderSize.setMajorTickSpacing(5);
 		borderSize.setMinorTickSpacing(1);
 		borderSize.setPaintTicks(true);
@@ -70,9 +77,13 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
 		borderPanel.add(borderSize);
 		
 		// slider for corner rounding
-		cornerRound = new JSlider(JSlider.HORIZONTAL, 0, 20, getFrame().getLights().getSeizure().getCornerSize());
+		cornerRound = new JSlider(JSlider.HORIZONTAL, 0, 20, madness.getCornerSize());
 		cornerRound.setSnapToTicks(true);
-		cornerRound.addChangeListener(this);
+		cornerRound.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				madness.updateCorners(cornerRound.getValue());
+			}
+		});
 		cornerRound.setMajorTickSpacing(5);
 		cornerRound.setMinorTickSpacing(1);
 		cornerRound.setPaintTicks(true);
@@ -133,7 +144,7 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
         random = new JCheckBox("Randomize");
         random.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getFrame().getLights().getSeizure().updateRandomize(true);
+				madness.updateRandomize(true);
 				group.clearSelection();
 			}
 		});
@@ -159,39 +170,28 @@ public class SeizureControls extends Controls implements ChangeListener, ActionL
 		return new JPanel[]{nPanel, borderPanel, cornerPanel, gridLabelPanel};
 	}
 
-	public void stateChanged(ChangeEvent e) {
-		JSlider source = (JSlider)e.getSource();
-		if (source.equals(nSize)) {
-			getFrame().getLights().getSeizure().updateN(Math.max(1, nSize.getValue()));
-		} else if (source.equals(borderSize)) {
-			getFrame().getLights().getSeizure().updateBorder(borderSize.getValue());
-		} else if (source.equals(cornerRound)) {
-			getFrame().getLights().getSeizure().updateCorners(cornerRound.getValue());
-		}
-	}
-
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 		if ((((JRadioButton)src).equals(leftUp))) {
-			getFrame().getLights().getSeizure().setDirection(true, false, true, false);
+			madness.setDirection(true, false, true, false);
 		} else if ((((JRadioButton)src).equals(leftStraight))) {
-			getFrame().getLights().getSeizure().setDirection(false, false, true, false);
+			madness.setDirection(false, false, true, false);
 		} else if ((((JRadioButton)src).equals(leftDown))) {
-			getFrame().getLights().getSeizure().setDirection(false, true, true, false);
+			madness.setDirection(false, true, true, false);
 		} else if ((((JRadioButton)src).equals(upStraight))) {
-			getFrame().getLights().getSeizure().setDirection(true, false, false, false);
+			madness.setDirection(true, false, false, false);
 		} else if ((((JRadioButton)src).equals(center))) {
-			getFrame().getLights().getSeizure().setDirection(false, false, false, false);
+			madness.setDirection(false, false, false, false);
 		} else if ((((JRadioButton)src).equals(downStraight))) {
-			getFrame().getLights().getSeizure().setDirection(false, true, false, false);
+			madness.setDirection(false, true, false, false);
 		} else if ((((JRadioButton)src).equals(rightUp))) {
-			getFrame().getLights().getSeizure().setDirection(true, false, false, true);
+			madness.setDirection(true, false, false, true);
 		} else if ((((JRadioButton)src).equals(rightStraight))) {
-			getFrame().getLights().getSeizure().setDirection(false, false, false, true);
+			madness.setDirection(false, false, false, true);
 		} else if ((((JRadioButton)src).equals(rightDown))) {
-			getFrame().getLights().getSeizure().setDirection(false, true, false, true);
+			madness.setDirection(false, true, false, true);
 		}
 		random.setSelected(false);
-		getFrame().getLights().getSeizure().updateRandomize(false);
+		madness.updateRandomize(false);
 	}
 }

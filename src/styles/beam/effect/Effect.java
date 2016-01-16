@@ -16,9 +16,11 @@ public abstract class Effect {
 	
 	public abstract void draw(Graphics2D g, int x, int y, int maxRadius);
 	
-	public abstract void step();
+	public abstract void step(double speed);
 	
 	public abstract void switchDirection();
+	
+	public abstract void switchColor();
 	
 	public boolean getDone() {
 		return done;

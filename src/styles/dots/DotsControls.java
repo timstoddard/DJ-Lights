@@ -15,31 +15,30 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import main.Frame;
+import styles.BasicControls;
 import styles.Controls;
 
-public class DotsControls extends Controls {
+public class DotsControls extends JPanel implements Controls {
 	
 	private JPanel sideSizePanel, borderSizePanel, chaseSpeedPanel, buttonPanel;
 	private JSlider sideSize, borderSize;
-	private JComboBox chaseSpeed;
+	private JComboBox<?> chaseSpeed;
 	private JLabel chaseSpeedLabel;
 	private JCheckBox chase, rainbow;
+	private Dots dots;
 	
-	public DotsControls(Frame f) {
-		super(f);
+	public DotsControls(Dots dots) {
+		this.dots = dots;
 		createPanel();
 	}
 	
 	public void createPanel() {
-		super.removeAll();
-		super.basicPanel();
-		
 		// slider for side size
-		sideSize = new JSlider(JSlider.HORIZONTAL, 10, 200, getFrame().getLights().getDots().getSide());
+		sideSize = new JSlider(JSlider.HORIZONTAL, 10, 200, dots.getSide());
 		sideSize.setSnapToTicks(true);
 		sideSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getFrame().getLights().getDots().setSide(sideSize.getValue());
+				dots.setSide(sideSize.getValue());
 			}
 		});
 		sideSize.setMajorTickSpacing(40);
@@ -55,11 +54,11 @@ public class DotsControls extends Controls {
 		sideSizePanel.add(sideSize);
 		
 		// slider for border size
-		borderSize = new JSlider(JSlider.HORIZONTAL, 0, 30, getFrame().getLights().getDots().getBorder());
+		borderSize = new JSlider(JSlider.HORIZONTAL, 0, 30, dots.getBorder());
 		borderSize.setSnapToTicks(true);
 		borderSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getFrame().getLights().getDots().setBorder(borderSize.getValue());
+				dots.setBorder(borderSize.getValue());
 			}
 		});
 		borderSize.setMajorTickSpacing(10);
@@ -78,7 +77,7 @@ public class DotsControls extends Controls {
 		rainbow = new JCheckBox("Rainbow Mode");
 		rainbow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getFrame().getLights().getDots().toggleRainbow();
+				dots.toggleRainbow();
 				if (rainbow.isSelected()) {
 					chase.setSelected(false);
 					chaseSpeed.setEnabled(false);
@@ -91,7 +90,7 @@ public class DotsControls extends Controls {
 		chase = new JCheckBox("Chase Mode");
 		chase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getFrame().getLights().getDots().toggleChase();
+				dots.toggleChase();
 				if (chase.isSelected()) {
 					rainbow.setSelected(false);
 					chaseSpeed.setEnabled(true);
@@ -107,13 +106,13 @@ public class DotsControls extends Controls {
 		buttonPanel.add(chase);
 		
 		// chase speed chooser
-		chaseSpeed = new JComboBox(new String[]{"1", "2", "3", "4", "5"});
-		chaseSpeed.setSelectedIndex(getFrame().getLights().getDots().getChaseSpeed() - 1);
+		chaseSpeed = new JComboBox<String>(new String[]{"1", "2", "3", "4", "5"});
+		chaseSpeed.setSelectedIndex(dots.getChaseSpeed() - 1);
 		chaseSpeed.setEnabled(false);
 		chaseSpeed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int index = ((JComboBox)e.getSource()).getSelectedIndex();
-				getFrame().getLights().getDots().setChaseSpeed(index + 1);
+				int index = ((JComboBox<?>)e.getSource()).getSelectedIndex();
+				dots.setChaseSpeed(index + 1);
 			}
 		});
 		chaseSpeedLabel = new JLabel("Adjust chase speed");

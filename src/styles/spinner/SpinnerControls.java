@@ -17,28 +17,27 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import main.*;
+import styles.BasicControls;
 import styles.Controls;
 
-public class SpinnerControls extends Controls {
+public class SpinnerControls extends JPanel implements Controls {
 	
 	private JPanel layersPanel, radiusPanel, rotSpeedPanel;
 	private JSlider layers, radius, rotSpeed;
+	private Spinner spinner;
 	
-	public SpinnerControls(Frame f) {
-		super(f);
+	public SpinnerControls(Spinner spinner) {
+		this.spinner = spinner;
 		createPanel();
 	}
 	
 	public void createPanel() {
-		super.removeAll();
-		super.basicPanel();
-		
 		// slider for number of layers
-		layers = new JSlider(JSlider.HORIZONTAL, 2, 8, getFrame().getLights().getSpinner().getLayers());
+		layers = new JSlider(JSlider.HORIZONTAL, 2, 8, spinner.getLayers());
 		layers.setSnapToTicks(true);
 		layers.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getFrame().getLights().getSpinner().setLayers(layers.getValue());
+				spinner.setLayers(layers.getValue());
 			}
 		});
 		layers.setMajorTickSpacing(1);
@@ -53,11 +52,11 @@ public class SpinnerControls extends Controls {
 		layersPanel.add(layers);
 		
 		// slider for the radius
-		radius = new JSlider(JSlider.HORIZONTAL, 10, 40, getFrame().getLights().getSpinner().getRadius());
+		radius = new JSlider(JSlider.HORIZONTAL, 10, 40, spinner.getRadius());
 		radius.setSnapToTicks(true);
 		radius.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getFrame().getLights().getSpinner().setRadius(radius.getValue());
+				spinner.setRadius(radius.getValue());
 			}
 		});
 		radius.setMajorTickSpacing(5);
@@ -73,11 +72,11 @@ public class SpinnerControls extends Controls {
 		radiusPanel.add(radius);
 		
 		// slider for the speed of rotation
-		rotSpeed = new JSlider(JSlider.HORIZONTAL, 1, 10, getFrame().getLights().getSpinner().getRotationSpeed());
+		rotSpeed = new JSlider(JSlider.HORIZONTAL, 1, 10, spinner.getRotationSpeed());
 		rotSpeed.setSnapToTicks(true);
 		rotSpeed.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getFrame().getLights().getSpinner().setRotationSpeed(rotSpeed.getValue());
+				spinner.setRotationSpeed(rotSpeed.getValue());
 			}
 		});
 		rotSpeed.setMajorTickSpacing(1);

@@ -9,3 +9,5 @@ There is currently a bug where the dropdown menus in the control panel do not wo
    -For my range sliders, I modified the code from https://github.com/ernieyu/Swing-range-slider
    -For beat detection, I used the Minim audio library (https://github.com/ddf/Minim)
    -Along with Minim, I also used the org.tritons.share package (http://tritonus.sourceforge.net/apidoc/org/tritonus/share/package-tree.html), the javazoom.spi package (http://www.javazoom.net/mp3spi/mp3spi.html), and the javazoom.jl package (http://www.java2s.com/Code/Jar/j/Downloadjl10jar.htm).
+
+Note: If you would prefer to use an input other than the built-in microphone and are on OS X, there is an application called SoundFlower that will enable you to do this. Windows already has this feature built-in.

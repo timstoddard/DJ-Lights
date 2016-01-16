@@ -7,16 +7,13 @@ import styles.Visual;
 
 public class Strobe implements Visual {
 	
-	private int strobeCount, minStrobeOn, maxStrobeOn, minStrobeWait, maxStrobeWait;
+	private int strobeCount;
+	private double speed;
 	private boolean on;
 	private Color c;
 	
 	public Strobe() {
 		c = Color.WHITE;
-		minStrobeOn = 25;
-		maxStrobeOn = 40;
-		minStrobeWait = 40;
-		maxStrobeWait = 60;
 	}
 	
 	public void draw(Graphics2D g, int w, int h) {
@@ -29,7 +26,8 @@ public class Strobe implements Visual {
 	
 	public void step(int w, int h) {
 		strobeCount--;
-		if (on) {
+		strobeCount = strobeCount < 0 ? 0 : strobeCount;
+		/*if (on) {
 			if (strobeCount <= 0) {
 				on = false;
 				strobeCount = strobeCount();
@@ -39,65 +37,36 @@ public class Strobe implements Visual {
 				on = true;
 				strobeCount = strobeCount();
 			}
-		}
-	}
-	
-	public void restart() {
-		on = true;
-		strobeCount = strobeCount();
-	}
-	
-	public int getMinStrobeOn() {
-		return minStrobeOn;
-	}
-
-	public void setMinStrobeOn(int minStrobeOn) {
-		this.minStrobeOn = minStrobeOn;
-	}
-
-	public int getMaxStrobeOn() {
-		return maxStrobeOn;
-	}
-
-	public void setMaxStrobeOn(int maxStrobeOn) {
-		this.maxStrobeOn = maxStrobeOn;
-	}
-
-	public int getMinStrobeWait() {
-		return minStrobeWait;
-	}
-
-	public void setMinStrobeWait(int minStrobeWait) {
-		this.minStrobeWait = minStrobeWait;
-	}
-
-	public int getMaxStrobeWait() {
-		return maxStrobeWait;
-	}
-
-	public void setMaxStrobeWait(int maxStrobeWait) {
-		this.maxStrobeWait = maxStrobeWait;
-	}
-
-	private int strobeCount() {
-		return on ? (int)(minStrobeOn + Math.random() * (maxStrobeOn - minStrobeOn)) : (int)(minStrobeWait + Math.random() * (maxStrobeWait - minStrobeWait));
+		}*/
+		on = false;
 	}
 
 	@Override
 	public void hat() {
-		// TODO Auto-generated method stub
-		
+		on = true;
+		strobeCount = 6;
 	}
 
 	@Override
 	public void snare() {
+		on = true;
+		strobeCount = 6;
+	}
+
+	@Override
+	public void kick() {
+		on = true;
+		strobeCount = 6;
+	}
+	
+	@Override
+	public void freqBands(boolean[] freqBands) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void kick() {
-		// TODO Auto-generated method stub
-		
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 }

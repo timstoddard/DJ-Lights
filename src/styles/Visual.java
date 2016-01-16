@@ -13,4 +13,8 @@ public interface Visual {
 	public void snare();
 	
 	public void kick();
+	
+	public void freqBands(boolean[] freqBands);
+	
+	public void setSpeed(double speed);
 }

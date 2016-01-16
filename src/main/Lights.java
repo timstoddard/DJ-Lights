@@ -6,14 +6,17 @@ import javax.swing.JPanel;
 
 import styles.Visual;
 import styles.beam.Beam;
+import styles.blades.Blades;
 import styles.dots.Dots;
-import styles.seizure.Seizure;
+import styles.madness.Madness;
+import styles.rgb.RGB;
 import styles.spinner.Spinner;
 import styles.strobe.Strobe;
 
 public class Lights extends JPanel {
 	
 	private int refTime, style;
+	private double speed;
 	private boolean paused;
 	private Visual[] effects;
 	
@@ -23,37 +26,52 @@ public class Lights extends JPanel {
 		this.style = style;
 		paused = false;
 		effects = new Visual[]{
-				new Beam(), new Dots(), new Seizure(), new Spinner(), new Strobe()};
+				new Beam(), new Blades(), new Dots(), new Madness(),
+				new RGB(), new Spinner(), new Strobe()};
 	}
 
 	public void paintComponent(Graphics graphics) {
 		Graphics2D g = (Graphics2D)graphics;
 		super.paintComponent(g);
 		setBackground(Color.black);
-		long start = System.currentTimeMillis();
 		
 		int w = getWidth(), h = getHeight();
 		effects[style].draw(g, w, h);
 		if (!paused) {
 			effects[style].step(w, h);
 		}
-		
-		long end = System.currentTimeMillis();
-		try {Thread.sleep(Math.max(refTime - (end - start), 0));}
-		catch (InterruptedException e) {}
+	}
+	
+	public void repaintLights() {
 		repaint();
 	}
 	
 	public void hat() {
-		effects[style].hat();
+		if (!paused) {
+			effects[style].hat();
+		}
 	}
 	
 	public void snare() {
-		effects[style].snare();
+		if (!paused) {
+			effects[style].snare();
+		}
 	}
 	
 	public void kick() {
-		effects[style].kick();
+		if (!paused) {
+			effects[style].kick();
+		}
+	}
+	
+	public void freqBands(boolean[] freqBands) {
+		if (!paused) {
+			effects[style].freqBands(freqBands);
+		}
+	}
+	
+	public void setSpeed(double speed) {
+		effects[style].setSpeed(speed);
 	}
 	
 	public int getRefTime() {
@@ -85,26 +103,30 @@ public class Lights extends JPanel {
 	}
 
 	public Beam getBeam() {
-		return (Beam)effects[0];
+		return (Beam) effects[0];
+	}
+	
+	public Blades getBlades() {
+		return (Blades) effects[1];
 	}
 	
 	public Dots getDots() {
-		return (Dots)effects[1];
+		return (Dots) effects[2];
 	}
-
-	public Seizure getSeizure() {
-		return (Seizure)effects[2];
+	
+	public Madness getMadness() {
+		return (Madness) effects[3];
+	}
+	
+	public RGB getRGB() {
+		return (RGB) effects[4];
 	}
 
 	public Spinner getSpinner() {
-		return (Spinner)effects[3];
+		return (Spinner) effects[5];
 	}
 
 	public Strobe getStrobe() {
-		return (Strobe)effects[4];
-	}
-	
-	public void restartStrobe() {
-		((Strobe)effects[4]).restart();
+		return (Strobe) effects[6];
 	}
 }

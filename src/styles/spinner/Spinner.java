@@ -7,8 +7,8 @@ import styles.Visual;
 
 public class Spinner implements Visual {
 	
-	private int layers, rotation, rotationSpeed, x, y, minVel, maxVel, xVel, yVel, radius, movingCount;
-	private int count;
+	private int layers, rotation, rotationSpeed, x, y, minVel, maxVel, xVel, yVel, radius, movingCount, count;
+	private double speed;
 	private boolean moving;
 	private Color c1, c2;
 	
@@ -139,5 +139,16 @@ public class Spinner implements Visual {
 	public void kick() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void freqBands(boolean[] freqBands) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 }

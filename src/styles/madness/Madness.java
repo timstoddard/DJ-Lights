@@ -1,4 +1,4 @@
-package styles.seizure;
+package styles.madness;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -6,42 +6,33 @@ import javax.swing.JPanel;
 
 import styles.Visual;
 
-public class Seizure extends JPanel implements Visual {
+public class Madness extends JPanel implements Visual {
 	
-	private int n, border, corners, count, newDir;
+	private int n, border, corners, count;
+	private double speed;
 	private boolean up, down, left, right, color, randomize;
 	private Color[] c, c2;
 	
-	public Seizure() {
+	public Madness() {
 		super();
 		n = 50;
 		border = 0;
 		corners = 10;
 		count = 0;
-		newDir = setNewDir();
 		up = !true;
 		down = !true;
 		left = !true;
 		right = !true;
 		color = true;
 		randomize = true;
-		boolean seizure = !true;
-		if (seizure) { // total madness
-			c = new Color[] {
-					Color.black, Color.black, Color.black,
-					Color.red, Color.red, Color.red};
-			c2 = new Color[] {
-					Color.green, Color.green, Color.green,
-					Color.blue, Color.blue, Color.blue};
-		} else { // visual ecstasy
-			c = new Color[] {
-					Color.red, Color.red,
-					Color.green, Color.green,
-					Color.blue, Color.blue};
-			c2 = new Color[] {
-					Color.white, Color.white, Color.white,
-					Color.black, Color.black, Color.black};
-		}
+		// visual ecstasy
+		c = new Color[] {
+				Color.red, Color.red,
+				Color.green, Color.green,
+				Color.blue, Color.blue};
+		c2 = new Color[] {
+				Color.white, Color.white, Color.white,
+				Color.black, Color.black, Color.black};
 	}
 	
 	public void draw(Graphics2D g, int w, int h) {
@@ -49,19 +40,25 @@ public class Seizure extends JPanel implements Visual {
 			if (left) { // state = up + left
 				for (int i = 0; i < n; i++) {
 					for (int j = 0; j < n; j++) {
-						drawRect(g, (i + j + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (i + j + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			} else if (right) { // state = up + right
 				for (int i = n - 1; i >= 0; i--) {
 					for (int j = 0; j < n; j++) {
-						drawRect(g, (n - i + j + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (n - i + j + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			} else { // state = up
 				for (int i = 0; i < n; i++) {
 					for (int j = 0; j < n; j++) {
-						drawRect(g, (j + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (j + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			}
@@ -69,19 +66,25 @@ public class Seizure extends JPanel implements Visual {
 			if (left) { // state = down + left
 				for (int i = 0; i < n; i++) {
 					for (int j = n - 1; j >= 0; j--) {
-						drawRect(g, (i + n - j + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (i + n - j + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			} else if (right) { // state = down + right
 				for (int i = n - 1; i >= 0; i--) {
 					for (int j = n - 1; j >= 0; j--) {
-						drawRect(g, (n - i + n - j + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (n - i + n - j + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			} else { // state = down
 				for (int i = 0; i < n; i++) {
 					for (int j = n - 1; j >= 0; j--) {
-						drawRect(g, (n - j + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (n - j + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			}
@@ -89,36 +92,36 @@ public class Seizure extends JPanel implements Visual {
 			if (left) { // state = left
 				for (int i = 0; i < n; i++) {
 					for (int j = 0; j < n; j++) {
-						drawRect(g, (i + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (i + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			} else if (right) { // state = right
 				for (int i = n - 1; i >= 0; i--) {
 					for (int j = 0; j < n; j++) {
-						drawRect(g, (n - i + count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g, (n - i + count) % c.length, (int) (i * (double) w / n) + border,
+								(int) (j * (double) h / n) + border, (int) ((double) w / n) - border * 2,
+								(int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			} else { // state = center
 				for (int i = n - 1; i >= 0; i--) {
 					for (int j = n - 1; j >= 0; j--) {
-						drawRect(g, (Math.abs(n / 2 - (i)) + Math.abs(n / 2 - (n - j)) + c.length - 1 - count) % c.length, (int)(i * (double)w / n) + border, (int)(j * (double)h / n) + border, (int)((double)w / n) - border * 2, (int)((double)h / n) - border * 2, corners);
+						drawRect(g,
+								(Math.abs(n / 2 - (i)) + Math.abs(n / 2 - (n - j)) + c.length - 1 - count) % c.length,
+								(int) (i * (double) w / n) + border, (int) (j * (double) h / n) + border,
+								(int) ((double) w / n) - border * 2, (int) ((double) h / n) - border * 2, corners);
 					}
 				}
 			}
-		}		
+		}
 	}
 	
 	public void step(int w, int h) {
 		count++;
 		count %= c.length;
 		color = !color;
-		if (randomize) {
-			newDir--;
-			if (newDir == 0) {
-				newDirection();
-				newDir = setNewDir();
-			}
-		}
 	}
 	
 	private void drawRect(Graphics2D g, int i, int x, int y, int w, int h, int corner) {
@@ -142,18 +145,18 @@ public class Seizure extends JPanel implements Visual {
 		corners = c;
 	}
 	
-	public void updateRandomize(boolean b) {
-		randomize = b;
+	public void updateRandomize(boolean random) {
+		randomize = random;
 	}
 	
 	/**
 	 * Sets the direction based on the four booleans. Note: there should be no more
 	 * than 2 booleans true at any one time. If both up/down or left/right are true,
 	 * they will both be set to false.
-	 * @param up
-	 * @param down
-	 * @param left
-	 * @param right
+	 * @param up - sets whether the effect will move up or not
+	 * @param down - sets whether the effect will move down or not
+	 * @param left - sets whether the effect will move left or not
+	 * @param right - sets whether the effect will move right or not
 	 */
 	public void setDirection(boolean up, boolean down, boolean left, boolean right) {
 		this.up = up;
@@ -186,10 +189,6 @@ public class Seizure extends JPanel implements Visual {
 		return new boolean[]{up, down, left, right};
 	}
 	
-	private int setNewDir() {
-		return (int)Math.round(12 + 12 * Math.random());
-	}
-	
 	private void newDirection() {
 		int choice = (int)(Math.random() * 9);
 		if (choice == 0) {
@@ -215,19 +214,28 @@ public class Seizure extends JPanel implements Visual {
 
 	@Override
 	public void hat() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void snare() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void kick() {
-		// TODO Auto-generated method stub
+		if (randomize) {
+			newDirection();
+		}
+	}
+	
+	@Override
+	public void freqBands(boolean[] freqBands) {
 		
+	}
+
+	@Override
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 }

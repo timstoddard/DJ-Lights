@@ -7,7 +7,7 @@ import styles.beam.Arc;
 
 public class Clockwise extends Effect {
 	
-	private int vel, dir, dirCount, colorCount;
+	private int vel, dir;
 	private Color c1, c2;
 	
 	public Clockwise() {
@@ -25,27 +25,17 @@ public class Clockwise extends Effect {
 		}
 	}
 
-	public void step() {
+	public void step(double speed) {
 		for (Arc a : getBeams()) {
-			a.setThetas(new double[]{a.getTheta1() + Math.PI / 180 * vel * dir, a.getTheta2() + Math.PI / 180 * vel * dir});
+			a.setThetas(new double[]{a.getTheta1() + Math.PI / 180 * vel * speed * dir, a.getTheta2() + Math.PI / 180 * vel * speed * dir});
 		}
-		if (dirCount <= 0) {
-			dirCount = dirCount();
-			//switchDirection();
-		}
-		dirCount--;
-		if (colorCount <= 0) {
-			colorCount = colorCount();
-			switchColor();
-		}
-		colorCount--;
 	}
 	
 	public void switchDirection() {
 		dir *= -1;
 	}
 	
-	private void switchColor() {
+	public void switchColor() {
 		for (Arc a : getBeams()) {
 			if (a.getColor().equals(c1)) {
 				a.setColor(c2);
@@ -61,13 +51,5 @@ public class Clockwise extends Effect {
 	
 	public void setVel(int vel) {
 		this.vel = vel;
-	}
-	
-	private int dirCount() {
-		return (int)(50 + Math.random() * 20);
-	}
-	
-	private int colorCount() {
-		return (int)(20 + Math.random() * 15);
 	}
 }

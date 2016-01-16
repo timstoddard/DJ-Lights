@@ -17,33 +17,42 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import main.Frame;
+import styles.BasicControls;
 import styles.Controls;
 
-public class BeamControls extends Controls implements ActionListener {
+public class BeamControls extends JPanel implements Controls {
 	
 	private JPanel maxBeamPanel, stylePanel;
 	private JSlider maxBeamSize;
 	private JRadioButton style1, style2;
 	ButtonGroup styleGroup;
+	private Beam beam;
 	
-	public BeamControls(Frame f) {
-		super(f);
+	public BeamControls(Beam beam) {
+		this.beam = beam;
 		createPanel();
 	}
 	
 	public void createPanel() {
-		super.removeAll();
-		super.basicPanel();
-		
 		// choose between 2 different styles
 		style1 = new JRadioButton("Style 1");
-		style1.addActionListener(this);
+		style1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				beam.setStyle(1);
+				maxBeamSize.setEnabled(true);
+			}
+		});
 		style2 = new JRadioButton("Style 2");
-		style2.addActionListener(this);
+		style2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				beam.setStyle(2);
+				maxBeamSize.setEnabled(false);
+			}
+		});
 		ButtonGroup group = new ButtonGroup();
         group.add(style1);
         group.add(style2);
-        int currStyle = getFrame().getLights().getBeam().getStyle();
+        int currStyle = beam.getStyle();
         if (currStyle == 1) {
 			style1.setSelected(true);
 		} else if (currStyle == 2) {
@@ -57,11 +66,11 @@ public class BeamControls extends Controls implements ActionListener {
         stylePanel.add(style2, BorderLayout.EAST);
 		
 		// slider for beam number
-		maxBeamSize = new JSlider(JSlider.HORIZONTAL, 0, 10, getFrame().getLights().getBeam().getMaxBeams());
+		maxBeamSize = new JSlider(JSlider.HORIZONTAL, 0, 10, beam.getMaxBeams());
 		maxBeamSize.setSnapToTicks(true);
 		maxBeamSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				getFrame().getLights().getBeam().setMaxBeams(maxBeamSize.getValue());
+				beam.setMaxBeams(maxBeamSize.getValue());
 			}
 		});
 		maxBeamSize.setMajorTickSpacing(5);
@@ -82,16 +91,5 @@ public class BeamControls extends Controls implements ActionListener {
 	
 	public JPanel[] getPanels() {
 		return new JPanel[]{stylePanel, maxBeamPanel};
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		Object src = e.getSource();
-		if ((((JRadioButton)src).equals(style1))) {
-			getFrame().getLights().getBeam().setStyle(1);
-			maxBeamSize.setEnabled(true);
-		} else if ((((JRadioButton)src).equals(style2))) {
-			getFrame().getLights().getBeam().setStyle(2);
-			maxBeamSize.setEnabled(false);
-		}
 	}
 }

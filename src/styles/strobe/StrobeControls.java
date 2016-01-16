@@ -18,23 +18,23 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import main.*;
+import styles.BasicControls;
 import styles.Controls;
 import styles.strobe.rangeslider.RangeSlider;
 
-public class StrobeControls extends Controls {
+public class StrobeControls implements Controls {
 	
 	private JPanel strobeTimePanel, waitTimePanel;
 	private RangeSlider strobeTime, waitTime;
+	private Strobe strobe;
 	
-	public StrobeControls(Frame f) {
-		super(f);
+	public StrobeControls(Strobe strobe) {
+		this.strobe = strobe;
 		createPanel();
 	}
 	
 	public void createPanel() {
-		super.removeAll();
-		super.basicPanel();
-		
+		/*
 		// range slider for min/max strobe time
 		strobeTime = new RangeSlider(10, 50);
 		strobeTime.setValue(getFrame().getLights().getStrobe().getMinStrobeOn());
@@ -80,9 +80,10 @@ public class StrobeControls extends Controls {
 		waitTimePanel.setLayout(new BoxLayout(waitTimePanel, BoxLayout.Y_AXIS));
 		waitTimePanel.add(waitTimeLabel);
 		waitTimePanel.add(waitTime);
+		*/
 	}
 	
 	public JPanel[] getPanels() {
-		return new JPanel[]{strobeTimePanel, waitTimePanel};
+		return new JPanel[]{/*strobeTimePanel, waitTimePanel*/};
 	}
 }
