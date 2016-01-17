@@ -14,7 +14,7 @@ public abstract class Effect {
 		done = false;
 	}
 	
-	public abstract void draw(Graphics2D g, int x, int y, int maxRadius);
+	public abstract void draw(Graphics2D g, int x, int y, int maxRadius, boolean fillArc, boolean drawBorder);
 	
 	public abstract void step(double speed);
 	

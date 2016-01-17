@@ -361,7 +361,7 @@ public class Dots implements Visual {
 
 	@Override
 	public void hat() {
-		
+		hat = true;
 	}
 
 	@Override

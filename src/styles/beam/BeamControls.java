@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -23,14 +24,14 @@ import styles.Controls;
 
 public class BeamControls extends JPanel implements Controls {
 	
-	private JPanel maxBeamPanel, stylePanel, alignPanel, flickerPanel;
+	private JPanel checkBoxPanel, maxBeamPanel, stylePanel, alignPanel;
+	private JCheckBox flicker, fillArc, drawBorder;
 	private JRadioButton style1, style2;
 	private ButtonGroup styleGroup;
 	private JSlider maxBeamSize;
 	private JTextField align;
 	private JLabel alignLabel;
 	private String prevText;
-	private JCheckBox flicker;
 	private Beam beam;
 	
 	public BeamControls(Beam beam) {
@@ -46,8 +47,28 @@ public class BeamControls extends JPanel implements Controls {
 				beam.setFlicker(flicker.isSelected());
 			}
 		});
-		flickerPanel = new JPanel();
-		flickerPanel.add(flicker);
+		checkBoxPanel = new JPanel();
+		checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
+		checkBoxPanel.add(flicker);
+		
+		// toggle fill arc and draw border
+		fillArc = new JCheckBox("Fill Arc");
+		fillArc.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				beam.setFillArc(fillArc.isSelected());
+			}
+		});
+		fillArc.setSelected(true);
+		drawBorder = new JCheckBox("Draw Border");
+		drawBorder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				beam.setDrawBorder(drawBorder.isSelected());
+			}
+		});
+		drawBorder.setSelected(true);
+		checkBoxPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		checkBoxPanel.add(fillArc);
+		checkBoxPanel.add(drawBorder);
 		
 		// choose between 2 different styles
 		style1 = new JRadioButton("Style 1");
@@ -208,6 +229,6 @@ public class BeamControls extends JPanel implements Controls {
 	}
 	
 	public JPanel[] getPanels() {
-		return new JPanel[]{flickerPanel, stylePanel, maxBeamPanel, alignPanel};
+		return new JPanel[]{checkBoxPanel, stylePanel, maxBeamPanel, alignPanel};
 	}
 }

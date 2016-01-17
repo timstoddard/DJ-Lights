@@ -62,7 +62,7 @@ public class Frame extends JFrame implements MouseListener {
 	 * Initializes all the variables necessary for the frame to work.
 	 */
 	public void createFrame() {
-		style = 4;
+		style = 0;
 		cycleIndex = 0;
 		randIndex = 0;
 		screen = 0;

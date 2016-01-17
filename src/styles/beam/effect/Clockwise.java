@@ -12,16 +12,16 @@ public class Clockwise extends Effect {
 	
 	public Clockwise() {
 		super();
-		vel = 6;
+		vel = 8;
 		dir = 1;
 		c1 = Color.RED;
 		c2 = Color.GREEN;
 		addArc(new Arc(0, Math.PI / 8, c1));
 	}
 
-	public void draw(Graphics2D g, int x, int y, int maxRadius) {
+	public void draw(Graphics2D g, int x, int y, int maxRadius, boolean fillArc, boolean drawBorder) {
 		for (Arc a : getBeams()) {
-			a.draw(g, x, y, maxRadius);
+			a.draw(g, x, y, maxRadius, fillArc, drawBorder);
 		}
 	}
 

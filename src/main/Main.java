@@ -9,7 +9,7 @@ import soundin.BeatDetector;
 public class Main {
 	public static void main(String[] args) {
 		Frame[] frames;
-		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length > 0) {
+		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length > 1) {
 			String numOfFrames = "";
 			int failedAttempts = 0;
 			while (!isInt(numOfFrames)) {

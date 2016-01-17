@@ -11,38 +11,42 @@ public class Arc {
 	
 	private double mult, theta1, theta2;
 	private Color c;
-	private boolean drawBorders;
 	
 	public Arc(double theta1, double theta2, Color c) {
 		this.mult = 1.75 + 0.75 * Math.random();
 		this.theta1 = theta1;
 		this.theta2 = theta2;
 		this.c = c;
-		drawBorders = true;
 	}
 	
-	public void draw(Graphics2D g, int x, int y, int maxRadius) {
-		RadialGradientPaint arc = new RadialGradientPaint(
-				new Point(x, y),
-				(int)(maxRadius / 2 * mult),
-				new float[]{0f, 0.25f, 1f},
-				new Color[]{Color.WHITE, c, Color.BLACK});
+	public void draw(Graphics2D g, int x, int y, int maxRadius, boolean fillArc, boolean drawBorder) {
+		// fill the arc
+		if (fillArc) {
+			RadialGradientPaint arc = new RadialGradientPaint(
+					new Point(x, y),
+					(int)(maxRadius / 2 * mult),
+					new float[]{0f, 0.25f, 1f},
+					new Color[]{Color.WHITE, c, Color.BLACK});
+			g.rotate(theta1, x, y);
+			g.setPaint(arc);
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.7));
+			g.fill(new Arc2D.Float(x - (int)(maxRadius / 2 * mult), y - (int)(maxRadius / 2 * mult),
+					(int)(maxRadius * mult), (int)(maxRadius * mult),
+					-90, -(int)((theta2 - theta1) * 180 / Math.PI), Arc2D.PIE));
+		}
+		
+		// draw the borders
 		RadialGradientPaint border = new RadialGradientPaint(
 				new Point(x, y),
 				maxRadius,
 				new float[]{0f, 0.15f},
 				new Color[]{Color.WHITE, c});
-		g.rotate(theta1, x, y);
-		g.setPaint(arc);
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.7));
-		g.fill(new Arc2D.Float(x - (int)(maxRadius / 2 * mult), y - (int)(maxRadius / 2 * mult),
-				(int)(maxRadius * mult), (int)(maxRadius * mult),
-				-90, -(int)((theta2 - theta1) * 180 / Math.PI), Arc2D.PIE));
-		
-		// draw the borders
-		if (drawBorders) {
+		if (drawBorder) {
 			g.setPaint(border);
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.7));
+			if (!fillArc) {
+				g.rotate(theta1, x, y);
+			}
 			g.fillRect(x, y, 5, maxRadius);
 			g.rotate((int)((theta2 - theta1) * 180 / Math.PI) * Math.PI / 180, x, y);
 			g.fillRect(x, y, 5, maxRadius);
@@ -81,13 +85,5 @@ public class Arc {
 	
 	public void setColor(Color c) {
 		this.c = c;
-	}
-
-	public boolean getDrawBorders() {
-		return drawBorders;
-	}
-
-	public void setDrawBorders(boolean drawBorders) {
-		this.drawBorders = drawBorders;
 	}
  }

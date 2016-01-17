@@ -14,7 +14,7 @@ public class Beam implements Visual {
 	private int maxBeams, style;
 	private int[][] alignments;
 	private double speed;
-	private boolean lightsOn, flicker;
+	private boolean lightsOn, flicker, fillArc, drawBorder;
 	private ArrayList<Point> points;
 	private ArrayList<double[][]> style1Thetas;
 	private Effect[] effects;
@@ -27,6 +27,8 @@ public class Beam implements Visual {
 		speed = 1;
 		lightsOn = true;
 		flicker = false;
+		fillArc = true;
+		drawBorder = true;
 		points = new ArrayList<Point>();
 		style1Thetas = new ArrayList<double[][]>();
 		effects = new Effect[6];
@@ -48,7 +50,7 @@ public class Beam implements Visual {
 						for (int j = 0; j < style1Thetas.get(i).length; j++) {
 							new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
 									new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
-									.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+									.draw(g, x, y, (int)Math.sqrt(w * w + h * h), fillArc, drawBorder);
 						}
 					}
 				}
@@ -57,7 +59,7 @@ public class Beam implements Visual {
 					for (int j = 0; j < alignments[i].length; j++) {
 						int x = (int)points.get(alignments[i][j] - 1).getX(), y = (int)points.get(alignments[i][j] - 1).getY();
 						try {
-							effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+							effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h), fillArc, drawBorder);
 						} catch (java.lang.IllegalArgumentException e) {}
 					}
 				}
@@ -84,7 +86,6 @@ public class Beam implements Visual {
 						thetas[j][1] = thetas[j][0] + 0.1 + Math.PI / 8 * Math.random();
 					}
 					if (style1Thetas.size() <= i) {
-						System.out.println("added element!!");
 						style1Thetas.add(thetas);
 					} else {
 						style1Thetas.set(i, thetas);
@@ -93,7 +94,6 @@ public class Beam implements Visual {
 					effects[i].step(speed);
 				}
 			}
-			//System.out.println(style1Thetas.size());
 		}
 		lightsOn = !lightsOn;
 	}
@@ -130,6 +130,22 @@ public class Beam implements Visual {
 		this.flicker = flicker;
 	}
 
+	public boolean getFillArc() {
+		return fillArc;
+	}
+
+	public void setFillArc(boolean fillArc) {
+		this.fillArc = fillArc;
+	}
+
+	public boolean getDrawBorder() {
+		return drawBorder;
+	}
+
+	public void setDrawBorder(boolean drawBorder) {
+		this.drawBorder = drawBorder;
+	}
+
 	public void setAlignments(int[][] alignments) {
 		this.alignments = new int[alignments.length][];
 		for (int i = 0; i < alignments.length; i++) {
@@ -151,7 +167,11 @@ public class Beam implements Visual {
 
 	@Override
 	public void snare() {
-		
+		for (int i = 0; i < effects.length; i++) {
+			if (Math.random() > 0.5) {
+				effects[i].switchDirection();
+			}
+		}
 	}
 
 	@Override
