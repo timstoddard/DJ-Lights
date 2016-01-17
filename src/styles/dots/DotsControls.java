@@ -21,8 +21,7 @@ import styles.Controls;
 public class DotsControls extends JPanel implements Controls {
 	
 	private JPanel sideSizePanel, borderSizePanel, chaseSpeedPanel, buttonPanel;
-	private JSlider sideSize, borderSize;
-	private JComboBox<?> chaseSpeed;
+	private JSlider sideSize, borderSize, chaseSpeed;
 	private JLabel chaseSpeedLabel;
 	private JCheckBox chase, rainbow;
 	private Dots dots;
@@ -41,8 +40,8 @@ public class DotsControls extends JPanel implements Controls {
 				dots.setSide(sideSize.getValue());
 			}
 		});
-		sideSize.setMajorTickSpacing(40);
-		sideSize.setMinorTickSpacing(10);
+		sideSize.setMajorTickSpacing(38);
+		sideSize.setMinorTickSpacing(19);
 		sideSize.setPaintTicks(true);
 		sideSize.setPaintLabels(true);
 		sideSize.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -106,20 +105,26 @@ public class DotsControls extends JPanel implements Controls {
 		buttonPanel.add(chase);
 		
 		// chase speed chooser
-		chaseSpeed = new JComboBox<String>(new String[]{"1", "2", "3", "4", "5"});
-		chaseSpeed.setSelectedIndex(dots.getChaseSpeed() - 1);
-		chaseSpeed.setEnabled(false);
-		chaseSpeed.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int index = ((JComboBox<?>)e.getSource()).getSelectedIndex();
-				dots.setChaseSpeed(index + 1);
+		
+		
+		// slider for side size
+		chaseSpeed = new JSlider(JSlider.HORIZONTAL, 1, 10, dots.getChaseSpeed());
+		chaseSpeed.setSnapToTicks(true);
+		chaseSpeed.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				dots.setChaseSpeed(chaseSpeed.getValue());
 			}
 		});
+		chaseSpeed.setMajorTickSpacing(9);
+		chaseSpeed.setMinorTickSpacing(1);
+		chaseSpeed.setPaintTicks(true);
+		chaseSpeed.setPaintLabels(true);
+		chaseSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
 		chaseSpeedLabel = new JLabel("Adjust chase speed");
 		chaseSpeedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		chaseSpeedLabel.setEnabled(false);
 		chaseSpeedPanel = new JPanel();
-		chaseSpeedPanel.setLayout(new GridLayout(2, 1));
+		chaseSpeedPanel.setLayout(new BoxLayout(chaseSpeedPanel, BoxLayout.Y_AXIS));
 		chaseSpeedPanel.add(chaseSpeedLabel);
 		chaseSpeedPanel.add(chaseSpeed);
 	}

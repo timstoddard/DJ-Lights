@@ -17,7 +17,7 @@ public class Strobe implements Visual {
 	}
 	
 	public void draw(Graphics2D g, int w, int h) {
-		if (on && strobeCount % 2 == 0) {
+		if (on /*&& strobeCount % 2 == 0*/) {
 			g.setColor(c);
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)1));
 			g.fillRect(0, 0, w, h);
@@ -25,19 +25,8 @@ public class Strobe implements Visual {
 	}
 	
 	public void step(int w, int h) {
-		strobeCount--;
-		strobeCount = strobeCount < 0 ? 0 : strobeCount;
-		/*if (on) {
-			if (strobeCount <= 0) {
-				on = false;
-				strobeCount = strobeCount();
-			}
-		} else {
-			if (strobeCount <= 0) {
-				on = true;
-				strobeCount = strobeCount();
-			}
-		}*/
+		//strobeCount--;
+		//strobeCount = strobeCount < 0 ? 0 : strobeCount;
 		on = false;
 	}
 
@@ -61,7 +50,6 @@ public class Strobe implements Visual {
 	
 	@Override
 	public void freqBands(boolean[] freqBands) {
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -39,12 +39,23 @@ public class BeamControls extends JPanel implements Controls {
 	}
 	
 	public void createPanel() {
+		// toggle flickering
+		flicker = new JCheckBox("Flicker");
+		flicker.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				beam.setFlicker(flicker.isSelected());
+			}
+		});
+		flickerPanel = new JPanel();
+		flickerPanel.add(flicker);
+		
 		// choose between 2 different styles
 		style1 = new JRadioButton("Style 1");
 		style1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				beam.setStyle(1);
 				maxBeamSize.setEnabled(true);
+				align.setEnabled(false);
 			}
 		});
 		style2 = new JRadioButton("Style 2");
@@ -52,6 +63,7 @@ public class BeamControls extends JPanel implements Controls {
 			public void actionPerformed(ActionEvent e) {
 				beam.setStyle(2);
 				maxBeamSize.setEnabled(false);
+				align.setEnabled(true);
 			}
 		});
 		styleGroup = new ButtonGroup();
@@ -193,16 +205,6 @@ public class BeamControls extends JPanel implements Controls {
 		alignPanel.setLayout(new BoxLayout(alignPanel, BoxLayout.Y_AXIS));
 		alignPanel.add(alignLabel);
 		alignPanel.add(align);
-		
-		// toggle flickering
-		flicker = new JCheckBox("Flicker");
-		flicker.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				beam.setFlicker(flicker.isSelected());
-			}
-		});
-		flickerPanel = new JPanel();
-		flickerPanel.add(flicker);
 	}
 	
 	public JPanel[] getPanels() {

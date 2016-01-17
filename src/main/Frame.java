@@ -8,10 +8,14 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -30,7 +34,6 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import soundin.BeatDetector;
 import styles.ControlPanel;
 
 public class Frame extends JFrame implements MouseListener {
@@ -38,16 +41,16 @@ public class Frame extends JFrame implements MouseListener {
 	public static final int NORMAL_MODE = 0, CYCLE_MODE = 1, RANDOMIZE_MODE = 2;
 	private int style, cycleIndex, randIndex, screen, refTime, sensitivity;
 	private double levelThreshold;
-	private boolean cycle, randomize, showControls;
+	private boolean cycle, randomize, fullScreen, showControls, canOSXFullScreen;
+	private final boolean needsAttachedControls = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length == 1;
 	private Lights lights;
 	private ControlPanel controlPanel;
 	private ArrayList<Integer> includedEffects;
 	private Timer timer;
-	private JFrame externalControls; // implement this!!
-	private BeatDetector bd;
+	private JFrame externalControls;
 	
 	/**
-	 * Creates a frame with a specified title and beat detector options
+	 * Creates a frame with a specified title and beat detector options.
 	 * @param title
 	 */
 	public Frame(String title) {
@@ -55,33 +58,40 @@ public class Frame extends JFrame implements MouseListener {
 		createFrame();
 	}
 	
+	/**
+	 * Initializes all the variables necessary for the frame to work.
+	 */
 	public void createFrame() {
-		style = 0;
+		style = 4;
 		cycleIndex = 0;
 		randIndex = 0;
 		screen = 0;
 		refTime = 30;
-		sensitivity = 200;
+		sensitivity = 1000;
 		levelThreshold = 0.2;
 		cycle = false;
 		randomize = false;
+		fullScreen = false;
 		showControls = false;
+		canOSXFullScreen = enableOSXFullscreen(this);
+		if (!canOSXFullScreen) {
+			setUndecorated(false);
+		}
 		lights = new Lights(style);
 		controlPanel = new ControlPanel(this);
 		includedEffects = generateIncludedEffects();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		add(lights, BorderLayout.CENTER);
 		setVisible(true);
 		setResizable(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addMouseListener(this);
 		timer = new Timer(0, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (cycle) {
 					updateStyle(includedEffects.get(cycleIndex));
 					cycleIndex = cycleIndex + 1 >= includedEffects.size() ? 0 : cycleIndex + 1;
-					System.out.println(style);
 				} else if (randomize) {
 					updateStyle(includedEffects.get(randIndex));
 					int oldRandIndex = randIndex;
@@ -91,30 +101,73 @@ public class Frame extends JFrame implements MouseListener {
 				}
 			}
 		});
+		externalControls = new JFrame("Controls");
+		updateStyle(style);
 	}
 	
+	public static boolean enableOSXFullscreen(Window window) {
+	    if (window == null) {
+	    	return true;
+	    }
+	    try {
+	        Class<?> util = Class.forName("com.apple.eawt.FullScreenUtilities");
+	        Class<?>[] params = new Class[]{Window.class, Boolean.TYPE};
+	        Method method = util.getMethod("setWindowCanFullScreen", params);
+	        method.invoke(util, window, true);
+		    return true;
+	    } catch (ClassNotFoundException e) {
+	    	System.out.println("ERROR: OSX FULLSCREEN CLASS NOT FOUND");
+	        e.printStackTrace();
+	    	return false;
+	    } catch (Exception e) {
+	        System.out.println("ERROR: OSX FULLSCREEN FAIL");
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	public boolean needsAttachedControls() {
+		return needsAttachedControls;
+	}
+	
+	/**
+	 * Shows the controls, unless they are in a separate window.
+	 */
 	public void showControls() {
 		showControls = true;
-		getContentPane().removeAll();
-		getContentPane().revalidate();
-		add(lights, BorderLayout.CENTER);
-		controlPanel.update(style);
-		add(controlPanel, BorderLayout.SOUTH);
-		getContentPane().repaint();
+		if (needsAttachedControls) {
+			getContentPane().removeAll();
+			getContentPane().revalidate();
+			add(lights, BorderLayout.CENTER);
+			controlPanel.update(style);
+			add(controlPanel, BorderLayout.SOUTH);
+			getContentPane().revalidate();
+			getContentPane().repaint();
+		} else {
+			initExternalControls();
+		}
 	}
 	
+	/**
+	 * Hides the controls.
+	 */
 	public void hideControls() {
 		showControls = false;
-		getContentPane().removeAll();
-		getContentPane().revalidate();
-		add(lights, BorderLayout.CENTER);
-		getContentPane().repaint();
+		if (needsAttachedControls) {
+			getContentPane().removeAll();
+			getContentPane().revalidate();
+			add(lights, BorderLayout.CENTER);
+			getContentPane().repaint();
+		} else {
+			externalControls.dispose();
+		}
 	}
 	
 	public void updateStyle(int style) {
 		this.style = style;
 		lights.setStyle(style);
 		controlPanel.update(style);
+		externalControls.pack();
 	}
 	
 	public void hat() {
@@ -145,9 +198,16 @@ public class Frame extends JFrame implements MouseListener {
 	public void repaintLights() {
 		lights.repaintLights();
 	}
+	
+	public void setAntialiasing(boolean antialiasing) {
+		lights.setAntialiasing(antialiasing);
+	}
 
 	public void setFullScreen(boolean fullScreen) {
+		this.fullScreen = fullScreen;
+		// figure out what graphics devices are available
 		GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		// have the user choose which screen they want to display on
 		String chosenScreen = null;
 		if (gds.length > 1 && fullScreen) {
 			Object[] screens = new Object[gds.length];
@@ -170,7 +230,8 @@ public class Frame extends JFrame implements MouseListener {
 				}
 			}
 		}
-		this.setLocation(gds[screen].getDefaultConfiguration().getBounds().x, this.getY());
+		Rectangle bounds = gds[screen].getDefaultConfiguration().getBounds();
+		this.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 		if (fullScreen) {
 			if (gds.length == 1 || chosenScreen != null) {
 				setVisible(false);
@@ -189,7 +250,45 @@ public class Frame extends JFrame implements MouseListener {
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
 			setVisible(true);
 		}
+		revalidate();
 		repaint();
+		if (!needsAttachedControls) {
+			initExternalControls();
+		}
+	}
+	
+	private void initExternalControls() {
+		externalControls.dispose();
+		externalControls = new JFrame("Controls");
+		externalControls.add(controlPanel, BorderLayout.CENTER);
+		externalControls.pack();
+		externalControls.setResizable(false);
+		externalControls.setAlwaysOnTop(true);
+		int ecScreen = 0;
+		if (fullScreen) {
+			ecScreen = screen != 0 ? 0 : 1;
+		}
+		Rectangle ecBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getScreenDevices()[ecScreen].getDefaultConfiguration().getBounds();
+		externalControls.setLocation(ecBounds.x, ecBounds.y);
+		externalControls.setVisible(true);
+		externalControls.addWindowListener(new WindowListener() {
+			public void windowOpened(WindowEvent e) {}
+			public void windowClosing(WindowEvent e) {
+				showControls = false;
+			}
+			public void windowClosed(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {
+				initExternalControls();
+			}
+			public void windowActivated(WindowEvent e) {}
+			public void windowDeactivated(WindowEvent e) {}
+		});
+	}
+	
+	public boolean canOSXFullScreen() {
+		return canOSXFullScreen;
 	}
 	
 	public int getStyle() {
@@ -238,14 +337,6 @@ public class Frame extends JFrame implements MouseListener {
 		}
 	}
 	
-	public int getDelay() {
-		return timer.getDelay();
-	}
-	
-	public void setDelay(int ms) {
-		timer.setDelay(ms);
-	}
-	
 	public void displayDelayDialog(int mode) {
 		includedEffects = generateIncludedEffects();
 		timer.stop();
@@ -260,10 +351,7 @@ public class Frame extends JFrame implements MouseListener {
 		delaySlider.setPaintLabels(true);
 		delaySlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent changeEvent) {
-				JSlider theSlider = (JSlider) changeEvent.getSource();
-				if (!theSlider.getValueIsAdjusting()) {
-					setDelay(delaySlider.getValue());
-				}
+				timer.setDelay(delaySlider.getValue() * 1000);
 			}
 		});
 		JPanel delayPanel = new JPanel(new BorderLayout());
@@ -293,6 +381,7 @@ public class Frame extends JFrame implements MouseListener {
 				}
 				Collections.sort(includedEffects);
 				lights.setPaused(false);
+				timer.setDelay(delaySlider.getValue() * 1000);
 			}
 		});
 		JPanel buttonPanel = new JPanel();
@@ -301,7 +390,7 @@ public class Frame extends JFrame implements MouseListener {
 		JCheckBox[] cbs = new JCheckBox[]{
 				new JCheckBox("Beams"), new JCheckBox("Blades"), new JCheckBox("Dots"),
 				new JCheckBox("RGB"), new JCheckBox("Madness"), new JCheckBox("Spinner"),
-				new JCheckBox("Strobe")
+				new JCheckBox("Strobe"), new JCheckBox("Swirl")
 		};
 		JPanel checkBoxPanel = new JPanel(new GridLayout(cbs.length, 1));
 		JLabel checkBoxLabel = new JLabel("Choose which visual effects you would like to include", SwingConstants.CENTER);
@@ -335,8 +424,9 @@ public class Frame extends JFrame implements MouseListener {
 		panel.add(checkBoxPanel);
 		panel.add(buttonPanel);
 	    dialog.add(panel);
-	    int width = 420, height = 180 + 20 * cbs.length;
-	    dialog.setBounds(new Rectangle((getWidth() - width) / 2, (getHeight() - height) / 2, width, height));
+	    dialog.pack();
+	    dialog.setSize(dialog.getWidth() + 40, dialog.getHeight());
+	    dialog.setLocation((getWidth() - dialog.getWidth()) / 2, (getHeight() - dialog.getHeight()) / 2); 
 	    dialog.setVisible(true);
 	    dialog.setModal(true);
 	}

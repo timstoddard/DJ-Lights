@@ -14,31 +14,35 @@ import styles.madness.Madness;
 import styles.rgb.RGB;
 import styles.spinner.Spinner;
 import styles.strobe.Strobe;
+import styles.swirl.Swirl;
 
 public class Lights extends JPanel {
 	
 	private int style;
-	private double speed;
-	private boolean paused;
+	private boolean paused, antialiasing;
 	private Visual[] effects;
 	
 	public Lights(int style) {
 		super();
 		this.style = style;
 		paused = false;
+		antialiasing = false;
 		effects = new Visual[]{
 				new Beam(), new Blades(), new Dots(), new Madness(),
-				new RGB(), new Spinner(), new Strobe()};
+				new RGB(), new Spinner(), new Strobe(), new Swirl()};
 	}
 
 	public void paintComponent(Graphics graphics) {
 		Graphics2D g = (Graphics2D)graphics;
 		super.paintComponent(g);
 		setBackground(Color.black);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		if (antialiasing) {
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		int w = getWidth(), h = getHeight();
 		effects[style].draw(g, w, h);
+		g.dispose();
 		if (!paused) {
 			effects[style].step(w, h);
 		}
@@ -92,6 +96,14 @@ public class Lights extends JPanel {
 		this.paused = paused;
 	}
 
+	public boolean getAntialiasing() {
+		return antialiasing;
+	}
+
+	public void setAntialiasing(boolean antialiasing) {
+		this.antialiasing = antialiasing;
+	}
+
 	public void togglePause() {
 		paused = !paused;
 	}
@@ -122,5 +134,9 @@ public class Lights extends JPanel {
 
 	public Strobe getStrobe() {
 		return (Strobe) effects[6];
+	}
+	
+	public Swirl getSwirl() {
+		return (Swirl) effects[7];
 	}
 }

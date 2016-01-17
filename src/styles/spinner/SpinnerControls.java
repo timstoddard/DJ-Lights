@@ -33,7 +33,7 @@ public class SpinnerControls extends JPanel implements Controls {
 	
 	public void createPanel() {
 		// slider for number of layers
-		layers = new JSlider(JSlider.HORIZONTAL, 2, 8, spinner.getLayers());
+		layers = new JSlider(JSlider.HORIZONTAL, 2, 4, spinner.getLayers());
 		layers.setSnapToTicks(true);
 		layers.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -72,7 +72,7 @@ public class SpinnerControls extends JPanel implements Controls {
 		radiusPanel.add(radius);
 		
 		// slider for the speed of rotation
-		rotSpeed = new JSlider(JSlider.HORIZONTAL, 1, 10, spinner.getRotationSpeed());
+		rotSpeed = new JSlider(JSlider.HORIZONTAL, 1, 10, (int) spinner.getRotationSpeed());
 		rotSpeed.setSnapToTicks(true);
 		rotSpeed.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {

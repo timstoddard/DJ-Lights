@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -23,7 +24,8 @@ public class BasicControls extends JPanel implements Controls {
 	
 	private JPanel basicControls, basicControlsMini, sliderPanel;
 	private JComboBox<?> styleChooser;
-	private JCheckBox fullScreen, externalControls;
+	private JCheckBox fullScreen, antialiasing;
+	private boolean shownAntialiasingWarning;
 	private JSlider refTime, sensitivity, levelThreshold;
 	private JButton pause, close;
 	private Frame f;
@@ -36,8 +38,8 @@ public class BasicControls extends JPanel implements Controls {
 	
 	public void createPanel() {
 		// style switcher
-		styleChooser = new JComboBox<String>(new String[]{"Beams", "Blades", "Dots", "Madness", "RGB",
-				"Spinner", "Strobe", "Cycle", "Randomize"});
+		styleChooser = new JComboBox<String>(new String[]{"Beams", "Blades", "Dots", "Madness",
+				"RGB", "Spinner", "Strobe", "Swirl", "Cycle", "Randomize"});
 		styleChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = ((JComboBox<?>)e.getSource()).getSelectedIndex();
@@ -59,16 +61,20 @@ public class BasicControls extends JPanel implements Controls {
 			}
 		});
 		
-		// toggles whether controls are in main window or a separate one
-		externalControls = new JCheckBox("Toggle External Controls");
-		externalControls.addActionListener(new ActionListener() {
+		// toggles antialiasing of the graphics
+		antialiasing = new JCheckBox("Toggle Antialiasing");
+		antialiasing.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// toggle external controls
+				if (!shownAntialiasingWarning) {
+					JOptionPane.showMessageDialog(f, "WARNING: Antialiasing can take a lot of"
+							+ " processing power.\nSome effects may lag if you turn this feature"
+							+ " on.", "Antialiasing warning", JOptionPane.WARNING_MESSAGE, null);
+					shownAntialiasingWarning = true;
+				}
+				f.setAntialiasing(antialiasing.isSelected());
 			}
 		});
-		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length == 1) {
-			externalControls.setSelected(false);
-		}
+		shownAntialiasingWarning = false;
 		
 		// pause button
 		pause = new JButton("Pause Effects");
@@ -108,7 +114,7 @@ public class BasicControls extends JPanel implements Controls {
 		JLabel refTimeLabel = new JLabel("Adjust refresh time (ms)");
 		refTimeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		sliderPanel = new JPanel();
-		sliderPanel.setLayout(new GridLayout(6, 1));//new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
+		sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
 		sliderPanel.add(refTimeLabel);
 		sliderPanel.add(refTime);
 		
@@ -117,10 +123,10 @@ public class BasicControls extends JPanel implements Controls {
 		sensitivity.setSnapToTicks(true);
 		sensitivity.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				f.setSensitivity(sensitivity.getValue());
+				f.setSensitivity(1000-sensitivity.getValue());
 			}
 		});
-		sensitivity.setMajorTickSpacing(250);
+		sensitivity.setMajorTickSpacing(200);
 		sensitivity.setMinorTickSpacing(50);
 		sensitivity.setPaintTicks(true);
 		sensitivity.setPaintLabels(true);
@@ -138,7 +144,7 @@ public class BasicControls extends JPanel implements Controls {
 				f.setLevelThreshold((double) levelThreshold.getValue() / 100);
 			}
 		});
-		levelThreshold.setMajorTickSpacing(25);
+		levelThreshold.setMajorTickSpacing(20);
 		levelThreshold.setMinorTickSpacing(5);
 		levelThreshold.setPaintTicks(true);
 		levelThreshold.setPaintLabels(true);
@@ -149,10 +155,12 @@ public class BasicControls extends JPanel implements Controls {
 		sliderPanel.add(levelThreshold);
 		
 		basicControlsMini = new JPanel();
-		basicControlsMini.setLayout(new GridLayout(5, 1));
+		basicControlsMini.setLayout(new GridLayout(f.canOSXFullScreen() ? 5 : 4, 1));
 		basicControlsMini.add(styleChooser);
-		basicControlsMini.add(fullScreen);
-		basicControlsMini.add(externalControls);
+		if (f.needsAttachedControls() && !f.canOSXFullScreen()) {
+			basicControlsMini.add(fullScreen);
+		}
+		basicControlsMini.add(antialiasing);
 		basicControlsMini.add(pause);
 		basicControlsMini.add(close);
 		basicControls = new JPanel();

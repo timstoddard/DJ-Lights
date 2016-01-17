@@ -6,15 +6,15 @@ import styles.Visual;
 
 public class RGB implements Visual {
 	
-	public final int NORMAL_MODE = 0, RAINBOW_MODE = 1, RANDOM_MODE = 2;
-	private double speed, mode;
-	private boolean hat, snare, kick;
+	private int repeat;
+	private boolean hat, snare, kick, vertical;
 	private Color[] colors;
 	
 	public RGB() {
 		super();
-		speed = 1.0;
+		repeat = 4;
 		hat = snare = kick = false;
+		vertical = true;
 		colors = new Color[3];
 		colors[0] = Color.RED;
 		colors[1] = Color.GREEN;
@@ -23,66 +23,57 @@ public class RGB implements Visual {
 	
 	public void draw(Graphics2D g, int w, int h) {
 		if (hat) {
-			g.setColor(Color.red);
-			g.fillRect(0, 0, w / 3, h);
-			
+			for (int i = 0; i < repeat * 3; i += 3) {
+				g.setColor(colors[0]);
+				if (vertical) {
+					g.fillRect((int) ((double) w * i / (repeat * 3)), 0, (int) ((double) w / (repeat * 3)), h);
+				} else {
+					g.fillRect(0, (int) ((double) h * i / (repeat * 3)), w, (int) ((double) h / (repeat * 3)));
+				}
+			}
 		}
 		if (snare) {
-			g.setColor(Color.green);
-			g.fillRect(w / 3, 0, w / 3, h);
-			
+			for (int i = 1; i < repeat * 3; i += 3) {
+				g.setColor(colors[1]);
+				if (vertical) {
+					g.fillRect((int) ((double) w * i / (repeat * 3)), 0, (int) ((double) w / (repeat * 3)), h);
+				} else {
+					g.fillRect(0, (int) ((double) h * i / (repeat * 3)), w, (int) ((double) h / (repeat * 3)));
+				}
+			}
 		}
 		if (kick) {
-			g.setColor(Color.blue);
-			g.fillRect(2 * w / 3, 0, w / 3, h);
+			for (int i = 2; i < repeat * 3; i += 3) {
+				g.setColor(colors[2]);
+				if (vertical) {
+					g.fillRect((int) ((double) w * i / (repeat * 3)), 0, (int) ((double) w / (repeat * 3)), h);
+				} else {
+					g.fillRect(0, (int) ((double) h * i / (repeat * 3)), w, (int) ((double) h / (repeat * 3)));
+				}
+			}
 		}
 	}
 	
 	public void step(int w, int h) {
-		if (hat || snare || kick) {
-			for (int i = 0; i < colors.length; i++) {
-				colors[i] = nextRainbow(colors[i]);
-			}
-		}
 		hat = false;
 		snare = false;
 		kick = false;
 	}
 
-	private Color nextRainbow(Color c) {
-		// 255	0	0
-		// 255	128	0
-		// 255	255	0
-		// 128	255	0
-		// 0	255	0
-		// 0	255	128
-		// 0	255	255
-		// 0	128	255
-		// 0	0	255
-		// 128	0	255
-		// 255	0	255
-		// 255	0	128
-		
-		// g goes up, r goes down, b goes up, g goes down, r goes up, b goes down
-		int s = 3, r = c.getRed(), g = c.getGreen(), b = c.getBlue();
-		if (r == 255 && g < 255 && b == 0) {
-			g = g + s > 255 ? 255 : g + s;
-		} else if (r > 0 && g == 255 && b == 0) {
-			r = r - s < 0 ? 0 : r - s;
-		} else if (r == 0 && g == 255 && b < 255) {
-			b = b + s > 255 ? 255 : b + s;
-		} else if (r == 0 && g > 0 && b == 255) {
-			g = g - s < 0 ? 0 : g - s;
-		} else if (r < 255 && g == 0 && b == 255) {
-			r = r + s > 255 ? 255 : r + s;
-		} else if (r == 255 && g == 0 && b > 0) {
-			b = b - s < 0 ? 0 : b - s;
-		}
-		return new Color(r, g, b);
+	public int getRepeat() {
+		return repeat;
 	}
-	
-	private Color randomColor() {
-		return new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255));
+
+	public void setRepeat(int repeat) {
+		this.repeat = repeat;
+	}
+
+	public boolean isVertical() {
+		return vertical;
+	}
+
+	public void setVertical(boolean vertical) {
+		this.vertical = vertical;
 	}
 
 	@Override
@@ -102,12 +93,11 @@ public class RGB implements Visual {
 	
 	@Override
 	public void freqBands(boolean[] freqBands) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setSpeed(double speed) {
-		this.speed = speed;
+		
 	}
 }

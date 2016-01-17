@@ -382,7 +382,6 @@ public class BeatDetect
 		{
 			return false;
 		}
-		//System.out.println(fIsOnset.length);
 		return fIsOnset[i];
 	}
 

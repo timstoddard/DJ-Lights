@@ -8,14 +8,8 @@ import soundin.BeatDetector;
 
 public class Main {
 	public static void main(String[] args) {
-		Frame[] frames = loadFrames();
-		BeatDetector bd = new BeatDetector(frames);
-		bd.start();
-	}
-	
-	private static Frame[] loadFrames() {
 		Frame[] frames;
-		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length > 1) {
+		if (GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length > 0) {
 			String numOfFrames = "";
 			int failedAttempts = 0;
 			while (!isInt(numOfFrames)) {
@@ -39,7 +33,10 @@ public class Main {
 		} else {
 			frames = new Frame[]{new Frame("Turn Up!")};
 		}
-		return frames;
+		for (Frame frame : frames) {
+			BeatDetector bd = new BeatDetector(frame);
+			bd.start();
+		}
 	}
 	
 	private static boolean isInt(String s) {

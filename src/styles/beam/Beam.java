@@ -14,7 +14,7 @@ public class Beam implements Visual {
 	private int maxBeams, style;
 	private int[][] alignments;
 	private double speed;
-	private boolean lightsOn, flicker, align; // implement flicker to toggle whether lightsOn is used
+	private boolean lightsOn, flicker;
 	private ArrayList<Point> points;
 	private ArrayList<double[][]> style1Thetas;
 	private Effect[] effects;
@@ -27,41 +27,42 @@ public class Beam implements Visual {
 		speed = 1;
 		lightsOn = true;
 		flicker = false;
-		align = true;
 		points = new ArrayList<Point>();
 		style1Thetas = new ArrayList<double[][]>();
 		effects = new Effect[6];
 		for (int i = 0; i < 6; i++) {
 			effects[i] = new Clockwise();
 		}
+		step(0, 0);
 	}
 	
 	public void draw(Graphics2D g, int w, int h) {
 		for (int i = 0; i < points.size(); i++) {
 			drawLights(g, (int)points.get(i).getX(), (int)points.get(i).getY(), (int)(12 + Math.random() * 4));
 		}
-		try {
-			if (flicker ? lightsOn : true) {
-				if (style == 1) {
-					for (int i = 0; i < points.size(); i++) {
-						int x = (int)points.get(i).getX(), y = (int)points.get(i).getY();
-							for (int j = 0; j < style1Thetas.get(i).length; j++) {
-								new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
-										new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
-										.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
-							}
-					}
-				} else if (style == 2) {
-					for (int i = 0; i < alignments.length; i++) {
-						for (int j = 0; j < alignments[i].length; j++) {
-							int x = (int)points.get(alignments[i][j] - 1).getX(), y = (int)points.get(alignments[i][j] - 1).getY();
-							effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+		if (flicker ? lightsOn : true) {
+			if (style == 1) {
+				for (int i = 0; i < points.size(); i++) {
+					int x = (int)points.get(i).getX(), y = (int)points.get(i).getY();
+					if (style1Thetas.size() > 0) {
+						for (int j = 0; j < style1Thetas.get(i).length; j++) {
+							new Arc(style1Thetas.get(i)[j][0], style1Thetas.get(i)[j][1],
+									new Color((int)(Math.random() * 256), (int)(Math.random() * 256), (int)(Math.random() * 256)))
+									.draw(g, x, y, (int)Math.sqrt(w * w + h * h));
 						}
 					}
 				}
+			} else if (style == 2) {
+				for (int i = 0; i < alignments.length; i++) {
+					for (int j = 0; j < alignments[i].length; j++) {
+						int x = (int)points.get(alignments[i][j] - 1).getX(), y = (int)points.get(alignments[i][j] - 1).getY();
+						try {
+							effects[i].draw(g, x, y, (int)Math.sqrt(w * w + h * h));
+						} catch (java.lang.IllegalArgumentException e) {}
+					}
+				}
 			}
-		} catch (java.lang.IndexOutOfBoundsException e) {}
-		g.dispose();
+		}
 	}
 	
 	public void step(int w, int h) {
@@ -73,7 +74,6 @@ public class Beam implements Visual {
 		points.add(new Point(xBorder,     h - yBorder));
 		points.add(new Point(w / 2,       h - yBorder));
 		points.add(new Point(w - xBorder, h - yBorder));
-		lightsOn = !lightsOn;
 		
 		if (lightsOn) {
 			for (int i = 0; i < points.size(); i++) {
@@ -84,6 +84,7 @@ public class Beam implements Visual {
 						thetas[j][1] = thetas[j][0] + 0.1 + Math.PI / 8 * Math.random();
 					}
 					if (style1Thetas.size() <= i) {
+						System.out.println("added element!!");
 						style1Thetas.add(thetas);
 					} else {
 						style1Thetas.set(i, thetas);
@@ -92,7 +93,9 @@ public class Beam implements Visual {
 					effects[i].step(speed);
 				}
 			}
+			//System.out.println(style1Thetas.size());
 		}
+		lightsOn = !lightsOn;
 	}
 
 	private void drawLights(Graphics2D g, int x, int y, int cRad) {

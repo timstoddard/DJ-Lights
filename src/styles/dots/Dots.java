@@ -15,7 +15,7 @@ public class Dots implements Visual {
 	private Color currColor;
 	private ArrayList<Color> chaseColors;
 	private ArrayList<ArrayList<Dot>> dots;
-	private boolean chase, horizontal, goingDown, chaseBackwards, rainbow;
+	private boolean chase, horizontal, goingDown, chaseBackwards, rainbow, hat, snare, kick;
 	
 	public Dots() {
 		super();
@@ -82,7 +82,7 @@ public class Dots implements Visual {
 			}
 			// move along the chaser if chase is true
 			if (chase) {
-				for (int i = 0; i < chaseSpeed; i++) {
+				for (int i = 0; i < chaseSpeed * speed; i++) {
 					try {
 						dots.get(chaseCurrY).set(chaseCurrX, chaseColorIndex == chaseColors.size() ?
 								new Dot(randomColor()) : new Dot(chaseColors.get(chaseColorIndex)));
@@ -104,13 +104,14 @@ public class Dots implements Visual {
 						}
 					} else {
 						dots.get(i).get(j).step();
-						if (Math.random() < 0.8 / nHor / nVert) {
+						if ((Math.random() < 10. / nHor / nVert) && (hat || snare || kick)) {
 							dots.get(i).set(j, rainbow ? new Dot(nextRainbow(currColor)) : new Dot(currColor));
 						}
 					}
 				}
 			}
 		} catch (java.lang.IndexOutOfBoundsException e) {}
+		hat = snare = kick = false;
 	}
 	
 	private void moveChase() {
@@ -318,20 +319,19 @@ public class Dots implements Visual {
 	
 	class Dot {
 		
-		private double opacity, opDecrSpeed;
+		private final double opacityDecrSpeed = 0.1;
+		private double opacity;
 		private Color c;
 		private boolean inRandomChaser;
 		
 		public Dot() {
 			opacity = 0;
-			opDecrSpeed = 0.05;
 			c = Color.BLACK;
 			inRandomChaser = false;
 		}
 		
 		public Dot(Color c) {
 			opacity = 1;
-			opDecrSpeed = 0.05;
 			this.c = c;
 			inRandomChaser = false;
 		}
@@ -343,7 +343,7 @@ public class Dots implements Visual {
 		}
 		
 		public void step() {
-			opacity = opacity - opDecrSpeed <= 0 ? 0 : opacity - opDecrSpeed;
+			opacity = opacity - opacityDecrSpeed <= 0 ? 0 : opacity - opacityDecrSpeed;
 		}
 		
 		public void setColor(Color c) {
@@ -361,25 +361,21 @@ public class Dots implements Visual {
 
 	@Override
 	public void hat() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void snare() {
-		// TODO Auto-generated method stub
-		
+		snare = true;
 	}
 
 	@Override
 	public void kick() {
-		// TODO Auto-generated method stub
-		
+		kick = true;
 	}
 	
 	@Override
 	public void freqBands(boolean[] freqBands) {
-		// TODO Auto-generated method stub
 		
 	}
 

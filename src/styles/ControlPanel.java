@@ -11,6 +11,7 @@ import styles.madness.MadnessControls;
 import styles.rgb.RGBControls;
 import styles.spinner.SpinnerControls;
 import styles.strobe.StrobeControls;
+import styles.swirl.SwirlControls;
 
 public class ControlPanel extends JPanel {
 	
@@ -35,7 +36,8 @@ public class ControlPanel extends JPanel {
 				new MadnessControls(f.getLights().getMadness()),
 				new RGBControls(f.getLights().getRGB()),
 				new SpinnerControls(f.getLights().getSpinner()),
-				new StrobeControls(f.getLights().getStrobe())};
+				new StrobeControls(f.getLights().getStrobe()),
+				new SwirlControls(f.getLights().getSwirl())};
 		updateCurrEffectPanel(f.getStyle());
 		
 		setBorder(BorderFactory.createLoweredBevelBorder());
@@ -62,12 +64,12 @@ public class ControlPanel extends JPanel {
 		repaint();
 	}
 	
-	public void setFullScreenUnselected() {
-		basicControls.setFullScreenUnselected();
-	}
-	
 	public void updateStyleChooserIndex(int style) {
 		basicControls.updateStyleChooserIndex(style);
+	}
+	
+	public void setFullScreenUnselected() {
+		basicControls.setFullScreenUnselected();
 	}
 	
 	public int length() {
