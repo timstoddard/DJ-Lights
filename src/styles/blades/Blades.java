@@ -73,7 +73,6 @@ public class Blades implements Visual {
 
 	@Override
 	public void setSpeed(double speed) {
-		// TODO Auto-generated method stub
 		
 	}
 }

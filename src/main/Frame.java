@@ -67,7 +67,7 @@ public class Frame extends JFrame implements MouseListener {
 		randIndex = 0;
 		screen = 0;
 		refTime = 30;
-		sensitivity = 1000;
+		sensitivity = 800;
 		levelThreshold = 0.2;
 		cycle = false;
 		randomize = false;
