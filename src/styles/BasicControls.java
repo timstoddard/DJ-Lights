@@ -79,7 +79,7 @@ public class BasicControls extends JPanel implements Controls {
 		pause = new JButton("Pause Effects");
 		pause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				f.getLights().togglePause();
+				f.togglePause();
 				if (f.getLights().isPaused()) {
 					pause.setText("Unpause Effects");
 				} else {

@@ -337,6 +337,15 @@ public class Frame extends JFrame implements MouseListener {
 		}
 	}
 	
+	public void togglePause() {
+		lights.togglePause();
+		if (lights.isPaused()) {
+			timer.stop();
+		} else {
+			timer.start();
+		}
+	}
+	
 	public void displayDelayDialog(int mode) {
 		includedEffects = generateIncludedEffects();
 		timer.stop();
